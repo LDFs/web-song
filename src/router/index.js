@@ -9,11 +9,36 @@ const router = createRouter({
       name: 'home',
       component: HomeView
     },
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    //   component: () => import('../views/AboutView.vue')
-    // }
+    {
+      path: '/my',
+      name: 'my',
+      component: () => import('@/views/myMusic/MyMusic.vue')
+    },
+    {
+      path: '/friend',
+      name: 'friend',
+      component: () => import('@/views/follow/FollowFriend.vue')
+    },
+    {
+      path: '/discover/toplist',
+      name: 'rankList',
+      component: () => import('@/views/rankList/RankList.vue')
+    },
+    {
+      path: '/discover/playlist',
+      name: 'playlist',
+      component: () => import('@/views/playlist/PlaylistView.vue')
+    },
+    {
+      path: '/discover/artist',
+      name: 'artist',
+      component: () => import('@/views/artist/ArtistView.vue')
+    },
+    {
+      path: '/discover/newAlbum',
+      name: 'album',
+      component: () => import('@/views/newAlbum/NewAlbum.vue')
+    }
   ]
 })
 

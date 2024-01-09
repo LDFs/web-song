@@ -1,14 +1,21 @@
 <template>
-  <Header />
-  <Swiper />
-  <Main />
-  <footer>
+  <div id="home-container">
+    主页面
+    <Swiper />
+    <Main />
+
+  </div>
   
-  </footer>
 </template>
 <script setup>
-  import Header from './children/TopHeader.vue'
+  
   import Swiper from './children/HorizSwiper.vue'
   import Main from './children/MainMiddle.vue'
+
+  
 </script>
+
+<style scoped>
+
+</style>
 

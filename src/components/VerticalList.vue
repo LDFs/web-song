@@ -1,6 +1,7 @@
+// 竖向的列表框架
 <template>
   <div>
-    头部
+
   </div>
 </template>
 
