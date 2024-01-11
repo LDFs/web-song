@@ -1,0 +1,67 @@
+// 上方封面，下方文字的歌单列表项
+<template>
+  <div class="item-container">
+    <div class="cover">
+      <img :src="coverUrl" alt="" >
+      <div class="count-play">
+        <div>{{ displayCount }}</div>
+        <div class="icon"><el-icon ><VideoPlay /></el-icon></div>
+      </div>
+      
+    </div>
+    <div class="title">{{ title }}</div>
+  </div>
+</template>
+
+<script setup>
+import {computed} from 'vue'
+const props = defineProps({
+  coverUrl: String,
+  title: String,
+  playCount: Number
+})
+const displayCount = computed(() => {
+  let n = props.playCount
+  if(n > 10000){
+    return Math.floor(n/10000) + '万'
+  }
+  return n
+})
+
+</script>
+
+<style lang="scss" scoped>
+.item-container {
+  margin-bottom: 10px;
+}
+.cover {
+  position: relative;
+  width: 100%;
+}
+.cover img {
+  width: 100%;
+}
+.cover:hover {
+  cursor: pointer;
+}
+.count-play {
+  position: absolute;
+  bottom: 7px;
+  padding-left: 6px;
+  color: #e0e0e0;
+  width: 100%;
+  padding-top: 4px;
+  background-color: #7574748a;
+  border-top: 1px solid #1a1a1a;
+  font-size: 0.8rem;
+  .icon {
+    position: absolute;
+    right: 10px;
+    bottom: -6px;
+    font-size: 1.2rem;
+  }
+}
+.title {
+  font-size: 0.9rem;
+}
+</style>

@@ -1,6 +1,5 @@
 <template>
   <div id="home-container">
-    主页面
     <Swiper />
     <Main />
 
@@ -16,6 +15,8 @@
 </script>
 
 <style scoped>
-
+#home-container {
+  width: 54vw;
+}
 </style>
 

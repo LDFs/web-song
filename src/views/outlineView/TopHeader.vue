@@ -6,7 +6,7 @@
       </div>
       <div class="bigMenu">
         <div v-for="(item, index) in menu" :key="item.name" class="menu-item" 
-          :class="getActiveMenu(index, activeMenu)" @click="clickMenuItem(index)">
+          :class="getActiveMenu(index, activeMenu)" @click="clickMenuItem(item, index)">
           {{ item.name }}
           <div :class="getActiveTriangle(index, activeMenu)"></div>
         </div>
@@ -22,7 +22,7 @@
     <div class="bottom-line">
       <div v-if="activeMenu === 0" class="bottom-menu">
         <div v-for="(item, index) in subMenu" :key="item.name" class="sub-menu-item"
-          :class="getActiveSubMeun(index, activeSubMeun)" @click="changeSubMenuItem(index)">
+          :class="getActiveSubMeun(index, activeSubMeun)" @click="changeSubMenuItem(item, index)">
           {{ item.name }}
         </div>
       </div>
@@ -33,8 +33,8 @@
 
 <script setup>
 import { ref } from 'vue'
-// import {useRouter} from 'vue-router'
-// const router = useRouter()
+import {useRouter} from 'vue-router'
+const router = useRouter()
 
 /**
  * 顶部的目录列表menu，由父组件传入，里面每一项是一个对象：{name: 'xxx', linkName: 'xxxx'}
@@ -54,16 +54,19 @@ const getActiveTriangle = (i, j) => {
   if(i === j) return {itemTriangle: true}
   else return {itemTriangleNone: true}
 }
-const clickMenuItem = index => {
+const clickMenuItem = (item, index) => {
   activeMenu.value = index
+  router.push(item.linkName)
+  activeSubMeun.value = 0
 }
 
 const activeSubMeun = ref(0)
 const getActiveSubMeun = (i, j) => {
   if(i === j) return {activeSubMeunStyle: true}
 }
-const changeSubMenuItem = index =>{
+const changeSubMenuItem = (item, index) =>{
   activeSubMeun.value = index
+  router.push(item.linkName)
 }
 
 </script>
@@ -82,7 +85,7 @@ const changeSubMenuItem = index =>{
 }
 .top-line {
   width: 100%;
-  background-color: #171616;
+  background-color: #1f1e1e;
   color: #fff;
   display: flex;
   justify-content: center;

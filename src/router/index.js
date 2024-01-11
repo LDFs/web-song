@@ -20,22 +20,22 @@ const router = createRouter({
       component: () => import('@/views/follow/FollowFriend.vue')
     },
     {
-      path: '/discover/toplist',
+      path: '/toplist',
       name: 'rankList',
       component: () => import('@/views/rankList/RankList.vue')
     },
     {
-      path: '/discover/playlist',
+      path: '/playlist',
       name: 'playlist',
       component: () => import('@/views/playlist/PlaylistView.vue')
     },
     {
-      path: '/discover/artist',
+      path: '/artist',
       name: 'artist',
       component: () => import('@/views/artist/ArtistView.vue')
     },
     {
-      path: '/discover/newAlbum',
+      path: '/album',
       name: 'album',
       component: () => import('@/views/newAlbum/NewAlbum.vue')
     }
