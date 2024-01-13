@@ -79,7 +79,7 @@ const changeSubMenuItem = (item, index) =>{
   display: flex;
   .menu-item {
     display: inline-block;
-    padding: 26px 20px;
+    padding: 22px 20px;
     position: relative;
   }
 }

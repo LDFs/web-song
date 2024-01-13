@@ -23,7 +23,7 @@
       <NewAlbumPart :list="newAlbum" />
     </div>
     <div class="right-column">
-      右
+      <ArtistsList :artistsList="artistsList" />
     </div>
   </div>
   
@@ -32,15 +32,18 @@
 <script setup>
 import {ref} from 'vue'
 import {getRecomMusicList, getHighqualityList, getNewAlbum} from '@/network/getPlayList'
+import {getTopArtists, getArtistDetailById} from '@/network/getArtists'
 
 import LittleNav from '@/common/LittleNav.vue';
 import CoverList from '@/components/CoverList.vue';
 import NewAlbumPart from './NewAlbumPart.vue';
+import ArtistsList from './ArtistsList.vue';
 
 const recommandSubList = ['华语', '流行', '摇滚', '民谣', '电子']
 const recommandCoverList = ref([])
 const recommandPersonalizedList = ref([])
 const newAlbum = ref([])
+const artistsList = ref([])
 
 getRecomMusicList().then(res => {
   recommandCoverList.value = res.data.result;
@@ -58,6 +61,20 @@ getHighqualityList().then(res => {
 getNewAlbum().then(res => {
   newAlbum.value = res.data.weekData.slice(0, 4)
 })
+getTopArtists().then(res => {
+  artistsList.value = []
+  const list = res.data.artists.slice(0, 10)
+  list.forEach(item => {
+    getArtistDetailById(item.id).then(res => {
+      const desc = res.data.data.identify.imageDesc
+      artistsList.value.push({
+        name: item.name,
+        picUrl: item.picUrl,
+        desc: desc
+      })
+    })
+  })
+})
 
 </script>
 
@@ -67,7 +84,7 @@ getNewAlbum().then(res => {
   flex-wrap: nowrap;
   justify-content: space-around;
   margin-top: 20px;
-  min-width: 500px;
+  // min-width: 500px;
 }
 .main-container {
   width: 70%;
@@ -76,5 +93,7 @@ getNewAlbum().then(res => {
 }
 .right-column {
   width: 30%;
+  border: 1px solid #c1bfbf;
+  border-left-color: transparent;
 }
 </style>

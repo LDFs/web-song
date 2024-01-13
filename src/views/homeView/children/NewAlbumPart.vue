@@ -38,5 +38,8 @@ defineProps({
       color: #777;
     }
   }
+  &>.item:hover {
+    cursor: pointer;
+  }
 }
 </style>
