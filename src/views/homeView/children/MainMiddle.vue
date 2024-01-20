@@ -10,16 +10,25 @@
             </el-breadcrumb-item>
           </el-breadcrumb>
         </template>
+        <template v-slot:right>
+          <div class="more" @click="gotoList('all')">更多<el-icon><Right /></el-icon></div>
+        </template>
       </LittleNav>
       <div style="margin-top: 10px;">
-        <CoverList :mList="recommandCoverList" :row="2" :col="4" />
+        <CoverList :mList="recommandCoverList" :row="2" :col="4" type="0" />
       </div>
       <LittleNav :title="'个性推荐'"></LittleNav>
       <div style="margin-top: 10px;">
-        <CoverList :mList="recommandPersonalizedList" :row="1" :col="4" />
+        <CoverList :mList="recommandPersonalizedList" :row="1" :col="4" type="0" />
       </div>
-      <LittleNav :title="'新碟上架'"></LittleNav>
-      <NewAlbumPart :list="newAlbum" />
+      <LittleNav :title="'新碟上架'">
+        <template v-slot:right>
+          <div class="more" @click="gotoAlbums">更多<el-icon><Right /></el-icon></div>
+        </template>
+      </LittleNav>
+      <div style="margin-top: 10px;">
+        <CoverList :mList="newAlbum" :row="1" :col="4" type="1" />
+      </div>
     </div>
     <div class="right-column">
       <ArtistsList :artistsList="artistsList" />
@@ -36,7 +45,6 @@ import {getTopArtists, getArtistDetailById} from '@/network/getArtists'
 
 import LittleNav from '@/common/LittleNav.vue';
 import CoverList from '@/components/CoverList.vue';
-import NewAlbumPart from './NewAlbumPart.vue';
 import ArtistsList from './ArtistsList.vue';
 import { activeSubMenu } from '@/store/observable';
 
@@ -46,18 +54,21 @@ const recommandPersonalizedList = ref([])
 const newAlbum = ref([])
 const artistsList = ref([])
 
-getRecomMusicList().then(res => {
-  recommandCoverList.value = res.data.result;
-})
+// 热门推荐
 getHighqualityList().then(res => {
   const list = res.data.playlists
-  for(let i = 0; i < 4; i++){
-    recommandPersonalizedList.value.push({
+  for(let i = 0; i < 8; i++){
+    recommandCoverList.value.push({
       name: list[i].name,
       picUrl: list[i].coverImgUrl,
       playCount: list[i].playCount
     })
   }
+})
+
+// 个性推荐
+getRecomMusicList().then(res => {
+  recommandPersonalizedList.value = res.data.result;
 })
 getNewAlbum().then(res => {
   newAlbum.value = res.data.weekData.slice(0, 4)
@@ -81,8 +92,13 @@ const router = useRouter()
 // 跳转歌单页面
 function gotoList(item){
   activeSubMenu.value = 2
-  router.push(`/playlist/${item}`)
+  router.push(`/playlist?cat=${item}`)
   // router.push({name: 'playlist', params: {cat: item}})
+}
+// 跳转到新碟页面
+function gotoAlbums(){
+  activeSubMenu.value = 4
+  router.push(`/album`)
 }
 
 </script>
@@ -99,6 +115,9 @@ function gotoList(item){
   padding: 1vw;
   border: 1px solid #c1bfbf;
 }
+.more:hover {
+    cursor: pointer;
+  }
 .right-column {
   width: 30%;
   border: 1px solid #c1bfbf;

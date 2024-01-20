@@ -22,7 +22,7 @@ const firstSubMenu = [
       linkName: 'toplist'
     },{
       name: '歌单',
-      linkName: 'playlist/all'
+      linkName: 'playlist'
     },{
       name: '歌手',
       linkName: 'artist'
@@ -49,6 +49,7 @@ const firstSubMenu = [
 <style scoped>
 footer {
   margin: 1vw;
+  margin-top: 0;
   padding: 1vw;
   border-top: 1px solid #b9b9b9;
   width: 100vw;

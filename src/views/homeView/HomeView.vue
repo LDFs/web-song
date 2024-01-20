@@ -19,7 +19,7 @@
 <style scoped>
 #home-container {
   width: 54vw;
-  min-width: 620px
+  min-width: 620px;
 }
 </style>
 

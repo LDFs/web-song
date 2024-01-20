@@ -22,9 +22,12 @@ function getRecomMusicListByCat(cat) {
 }
 
 // 获取精品歌单
-function getHighqualityList(){
+function getHighqualityList(cat){
   return request({
-    url: '/top/playlist/highquality'
+    url: '/top/playlist/highquality',
+    params: {
+      cat: cat
+    }
   })
 }
 
@@ -49,11 +52,19 @@ function getNewAlbum(){
   })
 }
 
+// 全部新碟
+function getAllAlbum(){
+  return request({
+    url: '/album/new'
+  })
+}
+
 export { 
   getRecomMusicList, 
   getHomePageCoverList,
   getHighqualityList, 
   getRecomMusicListByCat, 
   getRecomNewMusic,
-  getNewAlbum
+  getNewAlbum,
+  getAllAlbum
 }

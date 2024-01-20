@@ -5,7 +5,8 @@
       <div class="big-title">{{ title || '歌单' }}</div>
       <slot name="breadcrumb"></slot>
     </div>
-    <div class="more">更多<el-icon><Right /></el-icon></div>
+    <slot name="right"></slot>
+    <!-- <div class="more">更多<el-icon><Right /></el-icon></div> -->
   </div>
 </template>
 
@@ -24,9 +25,7 @@ defineProps({
   align-items: center;
   padding: 0 10px 4px;
   border-bottom: 2px solid #e82222;
-  .more:hover {
-    cursor: pointer;
-  }
+  
 }
 .nav-left {
   display: flex;

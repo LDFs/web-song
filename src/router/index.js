@@ -25,7 +25,7 @@ const router = createRouter({
       component: () => import('@/views/rankList/RankList.vue')
     },
     {
-      path: '/playlist/:cat',
+      path: '/playlist',
       name: 'playlist',
       component: () => import('@/views/playlist/PlaylistView.vue')
     },
