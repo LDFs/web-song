@@ -4,10 +4,9 @@
       <LittleNav :title="'热门推荐'">
         <template v-slot:breadcrumb>
           <el-breadcrumb separator="|">
-            <!-- <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-            <el-breadcrumb-item><a href="/">promotion management</a></el-breadcrumb-item> -->
-            <el-breadcrumb-item v-for="item in recommandSubList" :key="item">
-              {{ item }}
+            <el-breadcrumb-item v-for="item in recommandSubList" @click="gotoList(item)" :key="item">
+              <!-- :to="{ path:  }" -->
+              {{ item }} 
             </el-breadcrumb-item>
           </el-breadcrumb>
         </template>
@@ -31,6 +30,7 @@
 
 <script setup>
 import {ref} from 'vue'
+import {useRouter} from 'vue-router'
 import {getRecomMusicList, getHighqualityList, getNewAlbum} from '@/network/getPlayList'
 import {getTopArtists, getArtistDetailById} from '@/network/getArtists'
 
@@ -38,6 +38,7 @@ import LittleNav from '@/common/LittleNav.vue';
 import CoverList from '@/components/CoverList.vue';
 import NewAlbumPart from './NewAlbumPart.vue';
 import ArtistsList from './ArtistsList.vue';
+import { activeSubMenu } from '@/store/observable';
 
 const recommandSubList = ['华语', '流行', '摇滚', '民谣', '电子']
 const recommandCoverList = ref([])
@@ -76,6 +77,14 @@ getTopArtists().then(res => {
   })
 })
 
+const router = useRouter()
+// 跳转歌单页面
+function gotoList(item){
+  activeSubMenu.value = 2
+  router.push(`/playlist/${item}`)
+  // router.push({name: 'playlist', params: {cat: item}})
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -84,7 +93,6 @@ getTopArtists().then(res => {
   flex-wrap: nowrap;
   justify-content: space-around;
   margin-top: 20px;
-  // min-width: 500px;
 }
 .main-container {
   width: 70%;
@@ -96,4 +104,10 @@ getTopArtists().then(res => {
   border: 1px solid #c1bfbf;
   border-left-color: transparent;
 }
+</style>
+<style>
+  .el-breadcrumb__item .el-breadcrumb__inner:hover,.el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
+    cursor: pointer;
+    color: rgb(71, 129, 244);
+  }
 </style>

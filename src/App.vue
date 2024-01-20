@@ -22,7 +22,7 @@ const firstSubMenu = [
       linkName: 'toplist'
     },{
       name: '歌单',
-      linkName: 'playlist'
+      linkName: 'playlist/all'
     },{
       name: '歌手',
       linkName: 'artist'
@@ -35,9 +35,12 @@ const firstSubMenu = [
 </script>
 
 <template>
-  <Header :menu="headerMenu" :subMenu="firstSubMenu" />
-
-  <RouterView />
+  <Header :menu="headerMenu" :subMenu="firstSubMenu" />  
+  <router-view v-slot="{ Component }">
+    <keep-alive>
+      <component :is="Component" />
+    </keep-alive>    
+  </router-view>
   <footer>
     前端项目练习 by LDF
   </footer>

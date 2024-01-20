@@ -6,9 +6,9 @@
       </div>
       <div class="bigMenu">
         <div v-for="(item, index) in menu" :key="item.name" class="menu-item" 
-          :class="getActiveMenu(index, activeMenu)" @click="clickMenuItem(item, index)">
+          :class="getActiveMenu(index)" @click="clickMenuItem(item, index)">
           {{ item.name }}
-          <div :class="getActiveTriangle(index, activeMenu)"></div>
+          <div :class="getActiveTriangle(index)"></div>
         </div>
       </div>
       <div class="search-input">
@@ -22,7 +22,7 @@
     <div class="bottom-line">
       <div v-if="activeMenu === 0" class="bottom-menu">
         <div v-for="(item, index) in subMenu" :key="item.name" class="sub-menu-item"
-          :class="getActiveSubMeun(index, activeSubMeun)" @click="changeSubMenuItem(item, index)">
+          :class="getActiveSubMeun(index)" @click="changeSubMenuItem(item, index)">
           {{ item.name }}
         </div>
       </div>
@@ -32,8 +32,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+// import { ref } from 'vue'
 import {useRouter} from 'vue-router'
+
+import {activeMenu, activeSubMenu} from '@/store/observable'
+
 const router = useRouter()
 
 /**
@@ -44,28 +47,28 @@ defineProps({
   menu: Array,
   subMenu: Array
 })
-const activeMenu = ref(0)
-const getActiveMenu = (i, j) => {
-  if (i === j){
+// const activeMenu = state.activeMenu
+const getActiveMenu = (i) => {
+  if (i === activeMenu.value){
     return {activeMenuStyle: true}
   }
 }
-const getActiveTriangle = (i, j) => {
-  if(i === j) return {itemTriangle: true}
+const getActiveTriangle = (i) => {
+  if(i === activeMenu.value) return {itemTriangle: true}
   else return {itemTriangleNone: true}
 }
 const clickMenuItem = (item, index) => {
   activeMenu.value = index
   router.push(item.linkName)
-  activeSubMeun.value = 0
+  activeSubMenu.value = 0
 }
 
-const activeSubMeun = ref(0)
-const getActiveSubMeun = (i, j) => {
-  if(i === j) return {activeSubMeunStyle: true}
+// const activeSubMeun = ref(0)
+const getActiveSubMeun = (i) => {
+  if(i === activeSubMenu.value) return {activeSubMenuStyle: true}
 }
 const changeSubMenuItem = (item, index) =>{
-  activeSubMeun.value = index
+  activeSubMenu.value = index
   router.push(item.linkName)
 }
 
@@ -158,7 +161,7 @@ const changeSubMenuItem = (item, index) =>{
 .sub-menu-item:hover {
   cursor: pointer;
 }
-.activeSubMeunStyle {
+.activeSubMenuStyle {
   border-radius: 18px;
   background-color: #900707;
 }
