@@ -27,7 +27,7 @@
         </template>
       </LittleNav>
       <div style="margin-top: 10px;">
-        <CoverList :mList="newAlbum" :row="1" :col="4" type="1" />
+        <CoverList :mList="newAlbum" :row="1" :col="5" type="1" />
       </div>
     </div>
     <div class="right-column">
@@ -59,6 +59,7 @@ getHighqualityList().then(res => {
   const list = res.data.playlists
   for(let i = 0; i < 8; i++){
     recommandCoverList.value.push({
+      id: list[i].id,
       name: list[i].name,
       picUrl: list[i].coverImgUrl,
       playCount: list[i].playCount
@@ -71,7 +72,7 @@ getRecomMusicList().then(res => {
   recommandPersonalizedList.value = res.data.result;
 })
 getNewAlbum().then(res => {
-  newAlbum.value = res.data.weekData.slice(0, 4)
+  newAlbum.value = res.data.weekData.slice(0, 5)
 })
 getTopArtists().then(res => {
   artistsList.value = []

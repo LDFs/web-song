@@ -1,5 +1,8 @@
 <template>
-  <div class="lists-container">
+  <div v-if="showDetail">
+    <ListDetail :id="paramId" />
+  </div>
+  <div v-else class="lists-container">
     <div class="head-part">
       <span class="cat-title">{{ paramCat }}</span>
       <button class="choice-btn">
@@ -14,29 +17,38 @@
 import { useRoute } from 'vue-router'
 import { ref, onActivated } from 'vue'
 
-import CoverList from '@/components/CoverList.vue'
 import { getHighqualityList } from '@/network/getPlayList'
+import { getParamsByKey } from '@/utils/utils'
+import CoverList from '@/components/CoverList.vue'
+import ListDetail from './ListDetail.vue'
 
 const route = useRoute()
 const playLists = ref([])
 const paramCat = ref('全部')
+const paramId = ref('')
+const showDetail = ref(false)
 onActivated(() => {
-  console.log('===', route.fullPath)
-  const pathkv = route.fullPath.split('?')[1].split('=')
-  const index = pathkv.findIndex(item => item == 'cat')
-  if(pathkv.length === 0 || index === -1 || index === pathkv.length-1)
-    paramCat.value = '全部'
-  else paramCat.value = pathkv[index+1]
-  playLists.value = []
-  getHighqualityList(paramCat.value).then((res) => {
-    res.data.playlists.map((item) => {
-      playLists.value.push({
-        name: item.name,
-        picUrl: item.coverImgUrl,
-        playCount: item.playCount
+  // console.log('===', route.fullPath)
+  const path = route.fullPath
+  const p = getParamsByKey(path, 'cat')
+  paramCat.value = p ? p : '全部'
+
+  const i = getParamsByKey(path, 'id')
+  if (i) {
+    showDetail.value = true
+    paramId.value = i
+  } else {
+    playLists.value = []
+    getHighqualityList(paramCat.value).then((res) => {
+      res.data.playlists.map((item) => {
+        playLists.value.push({
+          name: item.name,
+          picUrl: item.coverImgUrl,
+          playCount: item.playCount
+        })
       })
     })
-  })
+  }
 })
 </script>
 

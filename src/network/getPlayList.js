@@ -59,6 +59,16 @@ function getAllAlbum(){
   })
 }
 
+// 歌单详情
+function getListDetail(id){
+  return request({
+    url: '/playlist/detail',
+    params: {
+      id: id
+    }
+  })
+}
+
 export { 
   getRecomMusicList, 
   getHomePageCoverList,
@@ -66,5 +76,6 @@ export {
   getRecomMusicListByCat, 
   getRecomNewMusic,
   getNewAlbum,
-  getAllAlbum
+  getAllAlbum,
+  getListDetail
 }

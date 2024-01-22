@@ -1,7 +1,7 @@
 // 上方封面，下方文字的歌单列表项
 <template>
   <div class="item-container">
-    <div class="cover">
+    <div class="cover" @click="gotoListDetal">
       <img :src="coverUrl" alt="" >
       <div class="count-play">
         <div>{{ displayCount }}</div>
@@ -15,7 +15,9 @@
 
 <script setup>
 import {computed} from 'vue'
+import {useRouter} from 'vue-router'
 const props = defineProps({
+  id: Number,
   coverUrl: String,
   title: String,
   playCount: Number
@@ -27,6 +29,10 @@ const displayCount = computed(() => {
   }
   return n
 })
+const router = useRouter()
+const gotoListDetal = () => {
+  router.push(`/playlist?id=${props.id}`)
+}
 
 </script>
 

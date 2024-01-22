@@ -1,7 +1,7 @@
 // 歌单封面列表 矩阵形式，根据传入的参数显示不同的行列
 <template>
   <div v-if="type==='0'" class="cover-container">
-    <TBItem v-for="item in list" :key="item.name" 
+    <TBItem v-for="item in list" :key="item.name" :id="item.id"
     :coverUrl="item.picUrl" :title="item.name" :playCount="item.playCount" />
   </div>
   <div v-if="type==='1'" class="cover-container">
