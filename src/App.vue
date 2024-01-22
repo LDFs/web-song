@@ -38,8 +38,9 @@ const firstSubMenu = [
   <Header :menu="headerMenu" :subMenu="firstSubMenu" />  
   <router-view v-slot="{ Component }">
     <keep-alive>
-      <component :is="Component" />
+      <component :is="Component" :key="$route.name" v-if="$route.meta.keepAlive"/>
     </keep-alive>    
+    <component :is="Component" :key="$route.name" v-if="!$route.meta.keepAlive"/>
   </router-view>
   <footer>
     前端项目练习 by LDF

@@ -13,5 +13,17 @@ function formatDateByNumber(d, splitString='-'){
   return res
 }
 
+/**
+ * 将毫秒格式化为正常的时间显示
+ * @param {Number} ms 毫秒数
+ */
+function formatMS(ms){
+  const dt = new Date(ms);
+  const mm = (dt.getMinutes() + "").padStart(2, "0");
+  const ss = (dt.getSeconds() + "").padStart(2, "0");
+  let d = mm + ":" + ss;
+  return d
+}
 
-export {getParamsByKey, formatDateByNumber}
+
+export {getParamsByKey, formatDateByNumber, formatMS}

@@ -69,6 +69,23 @@ function getListDetail(id){
   })
 }
 
+// 获取相关歌单
+function getRelatedList(id){
+  return request({
+    url: '/related/playlist',
+    params: {
+      id
+    }
+  })
+}
+
+// 获取歌曲全部榜单
+function getAllTopLists(){
+  return request({
+    url: '/toplist'
+  })
+}
+
 export { 
   getRecomMusicList, 
   getHomePageCoverList,
@@ -77,5 +94,7 @@ export {
   getRecomNewMusic,
   getNewAlbum,
   getAllAlbum,
-  getListDetail
+  getListDetail,
+  getRelatedList,
+  getAllTopLists
 }

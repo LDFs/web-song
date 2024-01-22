@@ -31,7 +31,7 @@ const displayCount = computed(() => {
 })
 const router = useRouter()
 const gotoListDetal = () => {
-  router.push(`/playlist?id=${props.id}`)
+  router.push(`/playlistDetail?id=${props.id}`)
 }
 
 </script>
