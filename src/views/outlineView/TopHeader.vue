@@ -32,12 +32,13 @@
 </template>
 
 <script setup>
-// import { ref } from 'vue'
-import {useRouter} from 'vue-router'
+import { watch, computed } from 'vue'
+import {useRouter, useRoute} from 'vue-router'
 
 import {activeMenu, activeSubMenu} from '@/store/observable'
 
 const router = useRouter()
+const route = useRoute()
 
 /**
  * 顶部的目录列表menu，由父组件传入，里面每一项是一个对象：{name: 'xxx', linkName: 'xxxx'}
@@ -47,7 +48,6 @@ defineProps({
   menu: Array,
   subMenu: Array
 })
-// const activeMenu = state.activeMenu
 const getActiveMenu = (i) => {
   if (i === activeMenu.value){
     return {activeMenuStyle: true}
@@ -60,17 +60,21 @@ const getActiveTriangle = (i) => {
 const clickMenuItem = (item, index) => {
   activeMenu.value = index
   router.push(item.linkName)
-  activeSubMenu.value = 0
 }
 
-// const activeSubMeun = ref(0)
 const getActiveSubMeun = (i) => {
   if(i === activeSubMenu.value) return {activeSubMenuStyle: true}
 }
-const changeSubMenuItem = (item, index) =>{
-  activeSubMenu.value = index
+const changeSubMenuItem = (item) =>{
   router.push(item.linkName)
 }
+const subMenus = ['/', '/toplist', '/playlist', '/artist', '/album']
+const path = computed(() => route.fullPath)
+watch(path, v => {
+  console.log(route.fullPath, v)
+  const i = subMenus.findIndex(item => v===item)
+  activeSubMenu.value = i
+})
 
 </script>
 

@@ -1,12 +1,24 @@
 <template>
-  <div class="lists-container">
+  <el-skeleton v-show="loading" style="width: 54vw; min-width: 620px;">
+    <template #template>
+      <div style="display: flex; flex-wrap: wrap;justify-content: space-between;">
+        <div v-for="item in 30" :key="item" style="width: 18%;">
+          <el-skeleton-item variant="image" style="width: 100%; height: 100px" />
+          <el-skeleton-item variant="text" />
+          <el-skeleton-item variant="text" />
+        </div>
+      </div>
+    </template>
+  </el-skeleton>
+
+  <div v-show="!loading" class="lists-container">
     <div class="head-part">
       <span class="cat-title">{{ paramCat }}</span>
       <button class="choice-btn">
         选择分类<el-icon><ArrowDown /></el-icon>
       </button>
     </div>
-    <CoverList :m-list="playLists" :col="5" :row="6" type="0" />
+    <CoverList :m-list="playLists" :col="5" :row="6" type="0" @imgLoad="showRealImg" />
   </div>
 </template>
 
@@ -37,6 +49,11 @@ getHighqualityList(paramCat.value).then((res) => {
     })
   })
 })
+
+const loading = ref(true)
+function showRealImg(){
+  loading.value = false
+}
 </script>
 
 <style lang="scss" scoped>

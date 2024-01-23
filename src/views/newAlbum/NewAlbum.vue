@@ -1,9 +1,20 @@
 <template>
-  <div class="albums-container">
+  <el-skeleton v-show="loading" style="width: 54vw; min-width: 620px;">
+    <template #template>
+      <div style="display: flex; flex-wrap: wrap;justify-content: space-between;">
+        <div v-for="item in 30" :key="item" style="width: 18%;">
+          <el-skeleton-item variant="image" style="width: 100%; height: 100px" />
+          <el-skeleton-item variant="text" />
+          <el-skeleton-item variant="text" />
+        </div>
+      </div>
+    </template>
+  </el-skeleton>
+  <div v-show="!loading" class="albums-container">
     <div class="title">热门新碟</div>
     <CoverList :mList="hotAlbums" :col="5" :row="2" type="1" />
     <div class="title">全部新碟</div>
-    <CoverList :mList="allAlbums" :col="5" :row="5" type="1" />
+    <CoverList :mList="allAlbums" :col="5" :row="5" type="1" @imgLoad="showRealImg" />
   </div>
 </template>
 
@@ -21,6 +32,11 @@ const allAlbums= ref([])
 getAllAlbum().then(res => {
   allAlbums.value = res.data.albums
 })
+
+const loading = ref(true)
+function showRealImg(){
+  loading.value = false
+}
 
 </script>
 

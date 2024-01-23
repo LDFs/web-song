@@ -84,7 +84,7 @@ const creatTime = ref('')
 const creator = ref({})
 const subscribes = ref([])
 getListDetail(id).then((res) => {
-  console.log(res.data.playlist)
+  // console.log(res.data.playlist)
   detailInfo.value = res.data.playlist
   creatTime.value = formatDateByNumber(detailInfo.value.createTime)
   creator.value = res.data.playlist.creator

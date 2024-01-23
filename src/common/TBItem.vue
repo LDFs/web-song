@@ -2,12 +2,11 @@
 <template>
   <div class="item-container">
     <div class="cover" @click="gotoListDetal">
-      <img :src="coverUrl" alt="" >
+      <img @load='imgOnLoad' :src="coverUrl" alt="" >
       <div class="count-play">
         <div>{{ displayCount }}</div>
         <div class="icon"><el-icon ><VideoPlay /></el-icon></div>
       </div>
-      
     </div>
     <div class="title">{{ title }}</div>
   </div>
@@ -32,6 +31,11 @@ const displayCount = computed(() => {
 const router = useRouter()
 const gotoListDetal = () => {
   router.push(`/playlistDetail?id=${props.id}`)
+}
+
+const emit = defineEmits(['imgLoad'])
+function imgOnLoad(){
+  emit('imgLoad')
 }
 
 </script>

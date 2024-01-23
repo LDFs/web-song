@@ -4,7 +4,7 @@
     <div class="cover">
       <span class="msk"></span>
       <span class="border"></span>
-      <img :src="coverUrl" alt="" >
+      <img @load='imgOnLoad' :src="coverUrl" alt="" >
     </div>
     <div class="title">{{ title }}</div>
     <div class="artist">{{ artist }}</div>
@@ -18,6 +18,10 @@ defineProps({
   artist: String
 })
 
+const emit = defineEmits(['imgLoad'])
+function imgOnLoad(){
+  emit('imgLoad')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -32,7 +36,7 @@ defineProps({
     width: 72%;
     height: 84%;
     border-radius: 50%;
-    background-color: #282828;
+    background-color: #414040;
     position: absolute;
     bottom: 10px;
     right: 10px;
@@ -43,10 +47,10 @@ defineProps({
     width: 70%;
     height: 82%;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 2px;
     position: absolute;
     bottom: 12px;
-    right: 17px;
+    left: 16%;
     z-index: -1;
   }
   img {

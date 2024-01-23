@@ -40,7 +40,7 @@ const router = createRouter({
       path: '/playlist',
       name: 'playlist',
       meta: {
-        keepAlive: false 
+        keepAlive: true 
       },
       component: () => import('@/views/playlist/PlaylistView.vue')
     },

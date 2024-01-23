@@ -10,6 +10,9 @@ function formatDateByNumber(d, splitString='-'){
   const date = new Date(d)
   let m = date.getMonth()+1
   let res = date.getFullYear() + splitString + m + splitString + date.getDate()
+  if(splitString === '年月日'){
+    res = date.getFullYear() + '年' + m + '月' + date.getDate() + '日'
+  }
   return res
 }
 

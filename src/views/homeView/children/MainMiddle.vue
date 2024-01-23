@@ -46,7 +46,6 @@ import {getTopArtists, getArtistDetailById} from '@/network/getArtists'
 import LittleNav from '@/common/LittleNav.vue';
 import CoverList from '@/components/CoverList.vue';
 import ArtistsList from './ArtistsList.vue';
-import { activeSubMenu } from '@/store/observable';
 
 const recommandSubList = ['华语', '流行', '摇滚', '民谣', '电子']
 const recommandCoverList = ref([])
@@ -92,13 +91,11 @@ getTopArtists().then(res => {
 const router = useRouter()
 // 跳转歌单页面
 function gotoList(item){
-  activeSubMenu.value = 2
   router.push(`/playlist?cat=${item}`)
   // router.push({name: 'playlist', params: {cat: item}})
 }
 // 跳转到新碟页面
 function gotoAlbums(){
-  activeSubMenu.value = 4
   router.push(`/album`)
 }
 
