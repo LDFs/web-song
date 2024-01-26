@@ -67,6 +67,22 @@ const router = createRouter({
         keepAlive: true 
       },
       component: () => import('@/views/newAlbum/NewAlbum.vue')
+    },
+    {
+      path: '/artistSongs',
+      name: 'artistSongs',
+      meta: {
+        keepAlive: false 
+      },
+      component: () => import('@/views/artist/ArtistSongs.vue')
+    },
+    {
+      path: '/song',
+      name: 'song',
+      meta: {
+        keepAlive: false 
+      },
+      component: () => import('@/views/songView/SongView.vue')
     }
   ]
 })

@@ -71,7 +71,7 @@ const changeSubMenuItem = (item) =>{
 const subMenus = ['/', '/toplist', '/playlist', '/artist', '/album']
 const path = computed(() => route.fullPath)
 watch(path, v => {
-  console.log(route.fullPath, v)
+  // console.log(route.fullPath, v)
   const i = subMenus.findIndex(item => v===item)
   activeSubMenu.value = i
 })

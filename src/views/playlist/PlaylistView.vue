@@ -43,6 +43,7 @@ playLists.value = []
 getHighqualityList(paramCat.value).then((res) => {
   res.data.playlists.map((item) => {
     playLists.value.push({
+      id: item.id,
       name: item.name,
       picUrl: item.coverImgUrl,
       playCount: item.playCount
