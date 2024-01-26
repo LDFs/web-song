@@ -1,18 +1,7 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import Header from '@/views/outlineView/TopHeader.vue'
-const headerMenu = [
-    {
-      name: '发现音乐',
-      linkName: '/'
-    },{
-      name: '我的音乐',
-      linkName: 'my'
-    },{
-      name: '关注',
-      linkName: 'friend'
-    }
-  ]
+
 const firstSubMenu = [
     {
       name: '推荐',
@@ -35,7 +24,7 @@ const firstSubMenu = [
 </script>
 
 <template>
-  <Header :menu="headerMenu" :subMenu="firstSubMenu" />  
+  <Header :subMenu="firstSubMenu" />  
   <router-view v-slot="{ Component }">
     <keep-alive>
       <component :is="Component" :key="$route.name" v-if="$route.meta.keepAlive"/>

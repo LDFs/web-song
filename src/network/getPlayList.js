@@ -86,6 +86,16 @@ function getAllTopLists(){
   })
 }
 
+// 获得歌曲的相似歌单
+function getSongRelatedLists(id){
+  return request({
+    url: '/simi/playlist',
+    params: {
+      id
+    }
+  })
+}
+
 export { 
   getRecomMusicList, 
   getHomePageCoverList,
@@ -96,5 +106,6 @@ export {
   getAllAlbum,
   getListDetail,
   getRelatedList,
-  getAllTopLists
+  getAllTopLists,
+  getSongRelatedLists
 }

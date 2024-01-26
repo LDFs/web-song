@@ -128,7 +128,7 @@ function clickItem(row, column){
   }
 }
 function gotoArtist(id){
-  console.log(id)
+  // console.log(id)
   router.push('/artistSongs?id='+id)
 }
 </script>

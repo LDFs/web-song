@@ -3,8 +3,8 @@
   <div class="lr-item">
     <img :src="item.imgUrl" alt="" :style="{width: imgWidth}">
     <div class="lr-text">
-      <div>{{ item.title }}</div>
-      <div class="desc">{{ item.desc }}</div>
+      <div v-if="item.title">{{ item.title }}</div>
+      <div class="desc" v-if="item.desc">{{ item.desc }}</div>
     </div>
   </div>
 </template>
@@ -12,7 +12,10 @@
 <script setup>
 defineProps({
   item: Object,
-  imgWidth: String,
+  imgWidth: {
+    type:String,
+    default: '4rem'
+  },
 })
 </script>
 

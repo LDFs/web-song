@@ -3,7 +3,7 @@
     <div class="left">
       <div class="top-cover">
         <div>
-          <span class="artist-name">{{ artistDetail.name }}</span>
+          <span class="artist-name-title">{{ artistDetail.name }}</span>
           <span class="artist-alias" v-for="item in artistDetail.alias" :key="item">{{
             item
           }}</span>
@@ -15,12 +15,19 @@
       </div>
       <div class="list-title">热门作品</div>
       <div class="songs-list">
-        <el-table :data="songs" style="width: 100%">
+        <el-table :data="songs" style="width: 100%" @cell-click="clickItem">
           <el-table-column type="index" :index="(index) => index + 1" />
-          <el-table-column prop="name" label="歌曲标题" width="180" />
+          <el-table-column prop="name" class-name="cursor-pointer" label="歌曲标题" width="180" />
           <el-table-column prop="dlong" label="时长" width="180" />
-          <el-table-column prop="artists" label="歌手" />
-          <el-table-column prop="album.name" label="专辑" />
+          <el-table-column class-name="cursor-pointer" label="歌手" >
+              <template #default="scope">
+                <span v-for="(item, index) in scope.row.artists" :key="item.id" @click="gotoArtist(item.id)"
+                  class="artist-name">
+                  {{ item.name }}<span v-if="index < scope.row.artists.length-1">/</span>
+                </span>
+              </template>
+            </el-table-column>
+          <el-table-column class-name="cursor-pointer" prop="album.name" label="专辑" />
         </el-table>
       </div>
     </div>
@@ -68,7 +75,7 @@ function updateData() {
         dt: item.dt,
         dlong: formatMS(item.dt),
         name: item.name,
-        artists: formatArtists(item.ar),
+        artists: item.ar,  // formatArtists(item.ar),
         album: item.al
       })
     })
@@ -90,6 +97,18 @@ function formatArtists(a) {
     res += item.name
   })
   return res
+}
+function gotoArtist(id){
+  router.push('/artistSongs?id='+id)
+}
+function clickItem(row, column){
+  if(column.no === 1){
+    const id = row.id
+    router.push('/song?id='+id)
+  }else if (column.no === 4){
+    const id = row.album.id
+
+  }
 }
 
 const router = useRouter()
@@ -131,12 +150,15 @@ function changeArtist(id) {
     background-size: 100%;
   }
 }
-.artist-name,
+.artist-name-title,
 .list-title,
 .related-title {
   font-size: 1.4rem;
   margin-bottom: 0.6rem;
   display: inline-block;
+}
+.artist-name:hover{
+  text-decoration: underline;
 }
 .list-title {
   margin-top: 0.8rem;
