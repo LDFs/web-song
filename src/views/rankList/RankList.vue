@@ -37,12 +37,19 @@
           <span>播放：{{ listInfo.playCount }}次</span>
         </div>
         <div>
-          <el-table :data="musicLists" style="width: 100%">
+          <el-table :data="musicLists" style="width: 100%" @cell-click="clickItem">
             <el-table-column type="index" :index="(index) => index + 1" />
-            <el-table-column prop="name" label="歌曲标题" width="180" />
+            <el-table-column prop="name" class-name="link-text" label="歌曲标题" width="180" />
             <el-table-column prop="dlong" label="时长" width="180" />
-            <el-table-column prop="artists[0].name" label="歌手" />
-            <el-table-column prop="album.name" label="专辑" />
+            <el-table-column label="歌手" >
+              <template #default="scope">
+                <span v-for="(item, index) in scope.row.artists" :key="item.id" @click="gotoArtist(item.id)"
+                  class="artist-name">
+                  {{ item.name }}<span v-if="index < scope.row.artists.length-1">/</span>
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="album.name" class-name="link-text" label="专辑" />
           </el-table>
         </div>
       </div>
@@ -52,9 +59,12 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import {useRouter} from 'vue-router'
 import { getAllTopLists, getListDetail } from '@/network/getPlayList'
 import LRItem from '@/common/LRItem.vue'
 import { formatDateByNumber, formatMS } from '@/utils/utils'
+
+const router = useRouter()
 
 const topLists = ref([])
 
@@ -113,7 +123,25 @@ watch(selected, v => {
   updateListInfo()
 })
 
+function gotoArtist(id){
+  router.push('/artistSongs?id='+id)
+}
+function clickItem(row, column){
+  if(column.no === 1){
+    const id = row.id
+    router.push('/song?id='+id)
+  }else if (column.no === 4){
+    const id = row.album.id
+    router.push(`/albumDetail?id=${id}`)
+  }
+}
 </script>
+<style>
+.link-text {
+  cursor: pointer;
+}
+
+</style>
 
 <style lang="scss" scoped>
 .rank-container {
@@ -195,5 +223,9 @@ watch(selected, v => {
     margin-left: 1rem;
     margin-right: 1rem;
   }
+}
+.artist-name:hover{
+  cursor: pointer;
+  text-decoration: underline;
 }
 </style>

@@ -69,6 +69,14 @@ const router = createRouter({
       component: () => import('@/views/newAlbum/NewAlbum.vue')
     },
     {
+      path: '/albumDetail',
+      name: 'albumDetail',
+      meta: {
+        keepAlive: true 
+      },
+      component: () => import('@/views/newAlbum/AlbumDetail.vue')
+    },
+    {
       path: '/artistSongs',
       name: 'artistSongs',
       meta: {

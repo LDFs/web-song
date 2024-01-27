@@ -5,8 +5,7 @@
     :coverUrl="item.picUrl" :title="item.name" :playCount="item.playCount" />
   </div>
   <div v-if="type==='1'" class="cover-container">
-    <AlbumItemVue v-for="item in list" :key="item.name" :coverUrl="item.picUrl" :title="item.name"
-     :artist="item.artist.name" @imgLoad="imageLoad"/>
+    <AlbumItemVue v-for="item in list" :key="item.name" :item="item" @imgLoad="imageLoad"/>
   </div>
 </template>
 

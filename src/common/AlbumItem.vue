@@ -1,26 +1,32 @@
 // 碟片的小项
 <template>
-  <div class="item-container">
-    <div class="cover">
+  <div v-if="item && Object.keys(item).length>0" class="item-container">
+    <div class="cover" @click="gotoAlbum">
       <span class="msk"></span>
       <span class="border"></span>
-      <img @load='imgOnLoad' :src="coverUrl" alt="" >
+      <img @load='imgOnLoad' :src="item.picUrl" alt="" >
     </div>
-    <div class="title">{{ title }}</div>
-    <div class="artist">{{ artist }}</div>
+    <div class="title">{{ item.name }}</div>
+    <div class="artist">
+      <span v-for="ar in item.artists" :key="ar.id">{{ ar.name }}</span>
+    </div>
   </div>
 </template>
 
 <script setup>
-defineProps({
-  coverUrl: String,
-  title: String,
-  artist: String
+import {useRouter} from 'vue-router'
+
+const props = defineProps({
+  item: Object
 })
 
 const emit = defineEmits(['imgLoad'])
 function imgOnLoad(){
   emit('imgLoad')
+}
+const router = useRouter()
+function gotoAlbum(){
+  router.push(`/albumDetail?id=${props.item.id}`)
 }
 </script>
 

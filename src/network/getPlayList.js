@@ -59,6 +59,15 @@ function getAllAlbum(){
   })
 }
 
+function getAlbumDetail(id){
+  return request({
+    url: '/album',
+    params: {
+      id
+    }
+  })
+}
+
 // 歌单详情
 function getListDetail(id){
   return request({
@@ -103,6 +112,7 @@ export {
   getRecomMusicListByCat, 
   getRecomNewMusic,
   getNewAlbum,
+  getAlbumDetail,
   getAllAlbum,
   getListDetail,
   getRelatedList,

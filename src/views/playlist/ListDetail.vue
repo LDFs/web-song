@@ -40,17 +40,17 @@
         <div>
           <el-table :data="musicLists" style="width: 100%" @cell-click="clickItem">
             <el-table-column type="index" :index="index => index+1" />
-            <el-table-column prop="name" class-name="cursor-pointer" label="歌曲标题" width="180" />
+            <el-table-column prop="name" class-name="link-text" label="歌曲标题" width="180" />
             <el-table-column prop="dlong" label="时长" width="180" />
-            <el-table-column class-name="cursor-pointer" label="歌手" >
+            <el-table-column class-name="link-text" label="歌手" >
               <template #default="scope">
                 <span v-for="(item, index) in scope.row.artists" :key="item.id" @click="gotoArtist(item.id)"
-                  class="artist-name">
+                  class="link-text">
                   {{ item.name }}<span v-if="index < scope.row.artists.length-1">/</span>
                 </span>
               </template>
             </el-table-column>
-            <el-table-column prop="album.name"  class-name="cursor-pointer" label="专辑" />
+            <el-table-column prop="album.name"  class-name="link-text" label="专辑" />
           </el-table>
         </div>
       </div>
@@ -124,7 +124,7 @@ function clickItem(row, column){
     router.push('/song?id='+id)
   }else if (column.no === 4){
     const id = row.album.id
-
+    router.push(`/albumDetail?id=${id}`)
   }
 }
 function gotoArtist(id){
@@ -133,7 +133,7 @@ function gotoArtist(id){
 }
 </script>
 <style>
-.cursor-pointer {
+.link-text {
   cursor: pointer;
 }
 
@@ -228,8 +228,9 @@ function gotoArtist(id){
     margin-right: 1rem;
   }
 }
-.artist-name:hover{
+.link-text:hover{
   text-decoration: underline;
+  cursor: hover;
 }
 .whole-right {
   width: 26%;

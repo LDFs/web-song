@@ -17,17 +17,21 @@
       <div class="songs-list">
         <el-table :data="songs" style="width: 100%" @cell-click="clickItem">
           <el-table-column type="index" :index="(index) => index + 1" />
-          <el-table-column prop="name" class-name="cursor-pointer" label="歌曲标题" width="180" />
+          <el-table-column prop="name" class-name="link-text" label="歌曲标题" width="180" />
           <el-table-column prop="dlong" label="时长" width="180" />
-          <el-table-column class-name="cursor-pointer" label="歌手" >
-              <template #default="scope">
-                <span v-for="(item, index) in scope.row.artists" :key="item.id" @click="gotoArtist(item.id)"
-                  class="artist-name">
-                  {{ item.name }}<span v-if="index < scope.row.artists.length-1">/</span>
-                </span>
-              </template>
-            </el-table-column>
-          <el-table-column class-name="cursor-pointer" prop="album.name" label="专辑" />
+          <el-table-column label="歌手">
+            <template #default="scope">
+              <span
+                v-for="(item, index) in scope.row.artists"
+                :key="item.id"
+                @click="gotoArtist(item.id)"
+                class="artist-name"
+              >
+                {{ item.name }}<span v-if="index < scope.row.artists.length - 1">/</span>
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column class-name="link-text" prop="album.name" label="专辑" />
         </el-table>
       </div>
     </div>
@@ -75,7 +79,7 @@ function updateData() {
         dt: item.dt,
         dlong: formatMS(item.dt),
         name: item.name,
-        artists: item.ar,  // formatArtists(item.ar),
+        artists: item.ar, // formatArtists(item.ar),
         album: item.al
       })
     })
@@ -88,26 +92,16 @@ function updateData() {
   })
 }
 
-function formatArtists(a) {
-  let res = ''
-  a.forEach((item, index) => {
-    if (index > 0) {
-      res += '/'
-    }
-    res += item.name
-  })
-  return res
+function gotoArtist(id) {
+  router.push('/artistSongs?id=' + id)
 }
-function gotoArtist(id){
-  router.push('/artistSongs?id='+id)
-}
-function clickItem(row, column){
-  if(column.no === 1){
+function clickItem(row, column) {
+  if (column.no === 1) {
     const id = row.id
-    router.push('/song?id='+id)
-  }else if (column.no === 4){
+    router.push('/song?id=' + id)
+  } else if (column.no === 4) {
     const id = row.album.id
-
+    router.push(`/albumDetail?id=${id}`)
   }
 }
 
@@ -116,7 +110,11 @@ function changeArtist(id) {
   router.push('/artistSongs?id=' + id)
 }
 </script>
-
+<style>
+.link-text {
+  cursor: pointer;
+}
+</style>
 <style lang="scss" scoped>
 .container {
   width: 54vw;
@@ -157,8 +155,9 @@ function changeArtist(id) {
   margin-bottom: 0.6rem;
   display: inline-block;
 }
-.artist-name:hover{
+.artist-name:hover {
   text-decoration: underline;
+  cursor: pointer;
 }
 .list-title {
   margin-top: 0.8rem;
@@ -166,11 +165,11 @@ function changeArtist(id) {
 .songs-list {
 }
 .related-artists {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  width: 12vw;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   .related-item {
-    width: 30%;
+    width: 3vw;
     font-size: 0.8rem;
     margin-bottom: 0.4rem;
     img {

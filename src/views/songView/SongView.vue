@@ -1,5 +1,9 @@
 <template>
-  <div v-if="Object.keys(songDetail).length > 0" class="background-cover" :style="{backgroundImage: `url(${songDetail.al.picUrl})`}"></div>
+  <div
+    v-if="Object.keys(songDetail).length > 0"
+    class="cover"
+    :style="{ backgroundImage: `url(${songDetail.al.picUrl})` }"
+  ></div>
   <OutlineArchi :border="'0 1'" v-if="Object.keys(songDetail).length > 0">
     <template v-slot:left>
       <div>
@@ -13,7 +17,11 @@
             <div class="artists">
               <span class="lable">歌手：</span>
               <span class="names">
-                <span v-for="(item, index) in songDetail.ar" :key="item.id" @click="gotoArtist(item.id)">
+                <span
+                  v-for="(item, index) in songDetail.ar"
+                  :key="item.id"
+                  @click="gotoArtist(item.id)"
+                >
                   {{ item.name }}<span v-if="index < songDetail.ar.length - 1">、</span>
                 </span>
               </span>
@@ -53,7 +61,9 @@
                 </p>
                 <div class="time-str">
                   <div>{{ item.timeStr }}</div>
-                  <div class="thumbup"><ThumbUp style="width: 1rem;height:1rem;"/>{{ item.likedCount }}</div>
+                  <div class="thumbup">
+                    <ThumbUp style="width: 1rem; height: 1rem" />{{ item.likedCount }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -68,18 +78,26 @@
                 </p>
                 <div class="time-str">
                   <div>{{ item.timeStr }}</div>
-                  <div class="thumbup"><ThumbUp style="width: 1rem;height:1rem;"/>{{ item.likedCount }}</div>
+                  <div class="thumbup">
+                    <ThumbUp style="width: 1rem; height: 1rem" />{{ item.likedCount }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <div v-else>无评论</div>
         </div>
       </div>
     </template>
     <template v-slot:right>
       <div>
         <div class="related-title">相似歌单</div>
-        <LRItem v-for="item in relatedList" :key="item.id" :item="item" @click="gotoList(item.id)" />
+        <LRItem
+          v-for="item in relatedList"
+          :key="item.id"
+          :item="item"
+          @click="gotoList(item.id)"
+        />
       </div>
     </template>
   </OutlineArchi>
@@ -177,28 +195,31 @@ getSongRelatedLists(id.value).then((res) => {
   })
 })
 
-function gotoArtist(id){
-  router.push('/artistSongs?id='+id)
+function gotoArtist(id) {
+  router.push('/artistSongs?id=' + id)
 }
-function gotoList(id){
-  router.push('/playlistDetail?id='+id)
+function gotoList(id) {
+  router.push('/playlistDetail?id=' + id)
 }
 </script>
 
 <style lang="scss" scoped>
-.background-cover {
+.cover {
   background-repeat: no-repeat;
   background-position: center;
-  opacity: .3;
+  background-size: cover;   // 让背景图片填充整个背景
+  opacity: 0.7;
   z-index: -2;
+  width: 100vw;
+  height: 100vh;
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  filter: blur(10px);   // 虚化当前元素
 }
+
 .top-info {
   display: flex;
   padding-top: 1rem;
@@ -246,7 +267,7 @@ function gotoList(id){
         gap: 4px;
         background-color: rgb(0, 85, 188);
         color: #fff;
-        border: 1px solid #eee;
+        border: none;
         border-radius: 3px;
         padding: 4px 8px;
       }
@@ -275,7 +296,8 @@ function gotoList(id){
   box-shadow: inset 0 0 5px rgb(173, 173, 173);
   background-color: rgb(177, 175, 175);
 }
-.lyrics {   // 这个不能设置高度，否则会跑到外面去
+.lyrics {
+  // 这个不能设置高度，否则会跑到外面去
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -299,7 +321,8 @@ function gotoList(id){
     border-bottom: 1px solid #ccc;
     // margin-right: 2rem;
   }
-  .hot-comments, .all-comments {
+  .hot-comments,
+  .all-comments {
     width: 100%;
     padding-right: 2rem;
   }
@@ -327,8 +350,8 @@ function gotoList(id){
     }
     .thumbup {
       display: flex;
-    align-items: center;
-    gap: 2px;
+      align-items: center;
+      gap: 2px;
     }
   }
 }
