@@ -30,4 +30,15 @@ function getComments(id){
   })
 }
 
-export {getSongDetail, getSongLyric, getComments}
+// 搜索
+function getSearchResult(keywords, type){
+  return request({
+    url: '/search',
+    params: {
+      keywords,
+      type
+    }
+  })
+}
+
+export {getSongDetail, getSongLyric, getComments, getSearchResult}

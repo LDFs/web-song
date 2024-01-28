@@ -8,7 +8,7 @@
         <div class="icon"><el-icon ><VideoPlay /></el-icon></div>
       </div>
     </div>
-    <div class="title">{{ title }}</div>
+    <div class="title text-line2">{{ title }}</div>
   </div>
 </template>
 
@@ -50,6 +50,7 @@ function imgOnLoad(){
 }
 .cover img {
   width: 100%;
+  height: fit-content;
 }
 .cover:hover {
   cursor: pointer;

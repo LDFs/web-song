@@ -91,6 +91,14 @@ const router = createRouter({
         keepAlive: false 
       },
       component: () => import('@/views/songView/SongView.vue')
+    },
+    {
+      path: '/searchResult',
+      name: 'searchResult',
+      meta: {
+        keepAlive: false 
+      },
+      component: () => import('@/views/search/SearchView.vue')
     }
   ]
 })

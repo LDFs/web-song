@@ -1,9 +1,21 @@
 function getParamsByKey(path, key){
-  const pathkv = path.split('?')[1]?.split('=')
-  if(!pathkv) return ''
-  const index = pathkv.findIndex(item => item == key)
-  if(index == -1) return ''
-  return pathkv[index+1]
+  const paramsStr = path.split('?')[1]
+  if(!paramsStr) return ''
+  let val = ''
+  paramsStr.split('&').forEach(item => {
+    const arr = item.split('=')
+    if(arr[0] === key){
+      val = arr[1]
+    }
+  })
+  return val
+
+
+  // const pathkv = path.split('?')[1]?.split('=')
+  // if(!pathkv) return ''
+  // const index = pathkv.findIndex(item => item == key)
+  // if(index == -1) return ''
+  // return pathkv[index+1]
 }
 
 function formatDateByNumber(d, splitString='-'){

@@ -13,13 +13,14 @@
     </div>
     <div class="search-input">
       <el-icon color="#111"><Search /></el-icon>
-      <input type="text" name="" value="" placeholder="音乐/歌单/歌手" />
+      <input type="text" name="" value="" placeholder="音乐/歌单/歌手/专辑" @keyup.enter="gotoSearch"
+        v-model="searchData" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { watch, computed } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 import { activeMenu, activeSubMenu } from '@/store/observable'
@@ -46,6 +47,13 @@ watch(path, (v) => {
   const i = subMenus.findIndex((item) => v === item)
   activeSubMenu.value = i
 })
+
+// 搜索
+const searchData = ref('')
+function gotoSearch(){
+  router.push(`/searchResult?keywords=${searchData.value}&type=1`)
+}
+
 </script>
 
 <style lang="scss" scoped>

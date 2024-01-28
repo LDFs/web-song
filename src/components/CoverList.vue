@@ -32,7 +32,7 @@ const list = computed(() => {
     return props.mList.slice(0, n)
   }else return props.mList
 })
-const percent1 = ref(Math.floor(100/props.col-2) + '%')
+// const percent1 = ref(Math.floor(100/props.col-2) + '%')
 
 const count = ref(0)
 function imageLoad(){
@@ -50,12 +50,11 @@ const emit = defineEmits(['imgLoad'])
 <style lang="scss" scoped>
 .cover-container {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  // gap: 2%;
-  flex-wrap: wrap;
-  &>div {
-    width: v-bind(percent1);
-  }
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  // &>div {
+  //   width: v-bind(percent1);
+  // }
 }
 </style>

@@ -3,8 +3,8 @@
   <div class="lr-item">
     <img :src="item.imgUrl" alt="" :style="{width: imgWidth}">
     <div class="lr-text">
-      <div v-if="item.title">{{ item.title }}</div>
-      <div class="desc" v-if="item.desc">{{ item.desc }}</div>
+      <div class="text-line2" v-if="item.title">{{ item.title }}</div>
+      <div class="desc text-line2" v-if="item.desc">{{ item.desc }}</div>
     </div>
   </div>
 </template>
@@ -29,6 +29,9 @@ defineProps({
     cursor: pointer;
     background-color: rgb(240, 240, 240);
   }
+  &>img {
+    height: fit-content;
+  }
 }
 .lr-text {
   display: flex;
@@ -40,4 +43,5 @@ defineProps({
     color: #a2a2a2;    
   }
 }
+
 </style>

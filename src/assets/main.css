@@ -37,3 +37,16 @@ a,
     padding: 0 2rem;
   }
 } */
+
+
+.text-line2 {
+  overflow: hidden;
+    text-overflow: ellipsis;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+
+    display: -moz-box;
+    -moz-box-orient: vertical;
+}
