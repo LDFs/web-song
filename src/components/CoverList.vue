@@ -51,7 +51,7 @@ const emit = defineEmits(['imgLoad'])
 .cover-container {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(v-bind(col), 1fr);
   gap: 1rem;
   // &>div {
   //   width: v-bind(percent1);

@@ -208,7 +208,7 @@ function gotoList(id) {
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;   // 让背景图片填充整个背景
-  opacity: 0.7;
+  opacity: 0.6;
   z-index: -2;
   width: 100vw;
   height: 100vh;

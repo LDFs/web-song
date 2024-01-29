@@ -33,7 +33,7 @@ getAllAlbum().then(res => {
   allAlbums.value = res.data.albums
 })
 
-const loading = ref(false)
+const loading = ref(true)
 function showRealImg(){
   loading.value = false
 }
