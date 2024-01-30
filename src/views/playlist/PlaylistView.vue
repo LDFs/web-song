@@ -1,5 +1,5 @@
 <template>
-  <el-skeleton v-show="loading" style="width: 54vw; min-width: 620px;">
+  <el-skeleton v-show="loading" class="out-container">
     <template #template>
       <div style="display: flex; flex-wrap: wrap;justify-content: space-between;">
         <div v-for="item in 30" :key="item" style="width: 18%;">
@@ -11,7 +11,7 @@
     </template>
   </el-skeleton>
 
-  <div v-show="!loading" class="lists-container">
+  <div v-show="!loading" class="lists-container out-container">
     <div class="head-part">
       <span class="cat-title">{{ paramCat }}</span>
       <button class="choice-btn">
@@ -59,8 +59,8 @@ function showRealImg(){
 
 <style lang="scss" scoped>
 .lists-container {
-  width: 54vw;
-  min-width: 620px;
+  // width: 54vw;
+  // min-width: 620px;
   padding: 1.2rem 2rem 0 2rem;
   border-left: 1px solid #c1bfbf;
   border-right: 1px solid #c1bfbf;

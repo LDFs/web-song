@@ -6,6 +6,7 @@
   ></div>
   <OutlineArchi :border="'0 1'" v-if="Object.keys(songDetail).length > 0">
     <template v-slot:left>
+      <audio autoplay ref="audioRef"></audio>
       <div>
         <div class="top-info">
           <div class="song-cover">
@@ -31,9 +32,13 @@
               <span class="names">{{ songDetail.al.name }}</span>
             </div>
             <div class="contrl-btns">
-              <button class="play-btn">
+              <button class="play-btn" @click="playAudio">
                 <el-icon><VideoPlay /></el-icon>
                 <div>播放</div>
+              </button>
+              <button class="play-btn" @click="pauseAudio">
+                <el-icon><VideoPlay /></el-icon>
+                <div>暂停</div>
               </button>
             </div>
           </div>
@@ -106,7 +111,7 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getSongDetail, getSongLyric, getComments } from '@/network/getSongsInfo'
+import { getSongDetail, getSongLyric, getComments, getSongUrl } from '@/network/getSongsInfo'
 import { getSongRelatedLists } from '@/network/getPlayList'
 import { getParamsByKey } from '@/utils/utils'
 import OutlineArchi from '@/common/OutlineArchi.vue'
@@ -125,6 +130,28 @@ const songDetail = ref({})
 getSongDetail(id.value).then((res) => {
   songDetail.value = res.data.songs[0]
 })
+const songUrl = ref("")
+const params = {
+  id: id.value,
+  level: 'standard'
+}
+getSongUrl(params).then(res => {
+  songUrl.value = res.data.data[0].url
+  audioRef.value.src = songUrl.value
+})
+
+
+const audioRef = ref(null)
+function playAudio(){
+  if(audioRef.value){
+    audioRef.value.play()
+  }
+}
+function pauseAudio(){
+  if(audioRef.value){
+    audioRef.value.pause()
+  }
+}
 
 const lyric = ref('')
 const lyrics = ref([])
@@ -270,6 +297,7 @@ function gotoList(id) {
         border: none;
         border-radius: 3px;
         padding: 4px 8px;
+        cursor: pointer;
       }
       .el-icon {
         font-size: 1rem;

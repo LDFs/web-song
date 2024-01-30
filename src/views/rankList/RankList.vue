@@ -1,5 +1,5 @@
 <template>
-  <div class="rank-container">
+  <div class="rank-container out-container">
     <div class="rank-left">
       <div class="title">音乐榜单</div>
       <div class="items">
@@ -146,8 +146,8 @@ function clickItem(row, column){
 <style lang="scss" scoped>
 .rank-container {
   display: flex;
-  width: 54vw;
-  min-width: 620px;
+  // width: 54vw;
+  // min-width: 620px;
   border-left: 1px solid #c1bfbf;
   border-right: 1px solid #c1bfbf;
   .rank-left {

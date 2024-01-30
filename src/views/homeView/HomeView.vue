@@ -1,5 +1,5 @@
 <template>
-  <div id="home-container">
+  <div id="home-container" class="out-container">
     <Swiper />
     <Main />
 
@@ -17,9 +17,6 @@
 </script>
 
 <style scoped>
-#home-container {
-  width: 54vw;
-  min-width: 620px;
-}
+
 </style>
 

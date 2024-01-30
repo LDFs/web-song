@@ -72,7 +72,7 @@ const router = createRouter({
       path: '/albumDetail',
       name: 'albumDetail',
       meta: {
-        keepAlive: true 
+        keepAlive: false
       },
       component: () => import('@/views/newAlbum/AlbumDetail.vue')
     },

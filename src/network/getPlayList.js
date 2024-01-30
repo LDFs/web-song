@@ -68,6 +68,14 @@ function getAlbumDetail(id){
   })
 }
 
+// 获取歌手热门专辑
+function getArtHotAlbum(params){
+  return request({
+    url: '/artist/album',
+    params: params
+  })
+}
+
 // 歌单详情
 function getListDetail(id){
   return request({
@@ -114,6 +122,7 @@ export {
   getNewAlbum,
   getAlbumDetail,
   getAllAlbum,
+  getArtHotAlbum,
   getListDetail,
   getRelatedList,
   getAllTopLists,

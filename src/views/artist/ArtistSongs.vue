@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container out-container">
     <div class="left">
       <div class="top-cover">
         <div>
@@ -117,8 +117,8 @@ function changeArtist(id) {
 </style>
 <style lang="scss" scoped>
 .container {
-  width: 54vw;
-  min-width: 620px;
+  // width: 54vw;
+  // min-width: 620px;
   display: flex;
   padding-left: 2rem;
   border-left: 1px solid #e0e0e0;

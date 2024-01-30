@@ -41,4 +41,18 @@ function getSearchResult(keywords, type){
   })
 }
 
-export {getSongDetail, getSongLyric, getComments, getSearchResult}
+// 获取歌曲url
+function getSongUrl(params){
+  return request({
+    url: '/song/url/v1',
+    params
+  })
+}
+
+export {
+  getSongDetail, 
+  getSongLyric, 
+  getComments, 
+  getSearchResult, 
+  getSongUrl
+}

@@ -1,5 +1,5 @@
 <template>
-  <el-skeleton v-show="loading" style="width: 54vw; min-width: 620px;">
+  <el-skeleton v-show="loading" class="out-container">
     <template #template>
       <div style="display: flex; flex-wrap: wrap;justify-content: space-between;">
         <div v-for="item in 30" :key="item" style="width: 18%;">
@@ -10,7 +10,7 @@
       </div>
     </template>
   </el-skeleton>
-  <div v-show="!loading" class="albums-container">
+  <div v-show="!loading" class="albums-container out-container">
     <div class="title">热门新碟</div>
     <CoverList :mList="hotAlbums" :col="5" :row="2" type="1" />
     <div class="title">全部新碟</div>

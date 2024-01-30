@@ -1,6 +1,8 @@
 <script setup>
+import {ref} from 'vue'
 import { RouterView } from 'vue-router'
 import Header from '@/views/outlineView/TopHeader.vue'
+import FooterPlay from './views/outlineView/FooterPlay.vue';
 
 const firstSubMenu = [
     {
@@ -21,10 +23,20 @@ const firstSubMenu = [
     }
   ]
 
+const mouseBootom = ref(false)
+const listenMouse = function(e){  
+  if(Math.abs(e.clientY - window.innerHeight) < 2){
+    mouseBootom.value = true
+  }else {
+    mouseBootom.value = false
+  }
+}
+
 </script>
 
 <template>
-  <Header :subMenu="firstSubMenu" />  
+  <div id="all-container" @mousemove="listenMouse">
+    <Header :subMenu="firstSubMenu" />  
   <router-view v-slot="{ Component }">
     <keep-alive>
       <component :is="Component" :key="$route.name" v-if="$route.meta.keepAlive"/>
@@ -34,9 +46,16 @@ const firstSubMenu = [
   <footer>
     前端项目练习 by LDF
   </footer>
+  <FooterPlay :mouseBootom="mouseBootom"/>
+  </div>
+  
 </template>
 
 <style scoped>
+#all-container {
+  width: 100vw;
+  height: 100vh;
+}
 footer {
   margin: 1vw;
   margin-top: 0;

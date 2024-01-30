@@ -57,3 +57,8 @@ a,
 .link-text:hover {
   text-decoration: underline;
 }
+.out-container {
+  width: 54vw;
+  min-width: 620px;
+  margin: 0 auto;
+}

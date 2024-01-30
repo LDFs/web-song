@@ -55,7 +55,18 @@
         </el-table>
       </div>
     </template>
-    <template v-slot:right> </template>
+    <template v-slot:right>
+      <div>TA的其他热门专辑</div>
+      <div v-if="hotAlbums.length > 0" class="hot-albums">
+        <div v-for="item in hotAlbums" :key="item.id" class="item" @click="gotoAlbum(item.id)">
+          <img :src="item.picUrl" alt="" width="100%" class="link-text" />
+          <div class="item-right">
+            <div>{{ item.name }}</div>
+            <div class="nickname">{{ formatDateByNumber(item.publishTime) }}</div>
+          </div>
+        </div>
+      </div>
+    </template>
   </OutlineArchi>
 </template>
 
@@ -63,7 +74,7 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getParamsByKey, formatDateByNumber, formatMS } from '@/utils/utils'
-import { getAlbumDetail } from '@/network/getPlayList'
+import { getAlbumDetail, getArtHotAlbum } from '@/network/getPlayList'
 import OutlineArchi from '@/common/OutlineArchi.vue'
 
 const route = useRoute()
@@ -72,15 +83,27 @@ const path = computed(() => route.fullPath)
 const id = ref(getParamsByKey(route.fullPath, 'id'))
 watch(path, (v) => {
   id.value = getParamsByKey(v, 'id')
+  updateData()
 })
 const albumInfo = ref({})
 const songs = ref([])
 const publishTime = ref('')
-getAlbumDetail(id.value).then((res) => {
+const hotAlbums = ref([])
+updateData()
+function updateData(){
+  getAlbumDetail(id.value).then((res) => {
   albumInfo.value = res.data.album
   songs.value = res.data.songs
   publishTime.value = formatDateByNumber(albumInfo.value.publishTime)
+  const params = {
+    id: albumInfo.value.artist.id,
+    limit: 5
+  }
+  getArtHotAlbum(params).then((res) => {
+    hotAlbums.value = res.data.hotAlbums
+  })
 })
+}
 
 function gotoArtist(id) {
   router.push('/artistSongs?id=' + id)
@@ -90,6 +113,9 @@ function clickItem(row, column) {
     const id = row.id
     router.push('/song?id=' + id)
   }
+}
+function gotoAlbum(id) {
+  router.push(`/albumDetail?id=${id}`)
 }
 </script>
 <style>
@@ -172,6 +198,24 @@ function clickItem(row, column) {
   .list-title {
     font-size: 1rem;
     font-weight: 600;
+  }
+}
+.hot-albums {
+  padding: 1rem;
+  .item {
+    display: flex;
+    margin-bottom: 1rem;
+    img {
+      width: 4vw;
+    }
+    .item-right {
+      display: flex;
+      flex-direction: column;
+      margin-left: 10px;
+    }
+    .nickname {
+      color: #505050;
+    }
   }
 }
 </style>

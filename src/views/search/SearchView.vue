@@ -1,5 +1,5 @@
 <template>
-  <div class="search-container">
+  <div class="search-container out-container">
     <div class="search-input">
       <input type="text" placeholder="歌曲、歌手、专辑、歌单" v-model="keywords" />
       <el-icon @click="goSearch"><Search /></el-icon>
@@ -86,8 +86,8 @@ function goSearch(){
 </style>
 <style lang="scss" scoped>
 .search-container {
-  width: 54vw;
-  min-width: 620px;
+  // width: 54vw;
+  // min-width: 620px;
   border-right: 1px solid #ccc;
   border-left: 1px solid #ccc;
   .search-input {
@@ -95,7 +95,7 @@ function goSearch(){
     justify-content: center;
     align-items: center;
     
-    margin-top: 4vh;
+    padding-top: 4vh;
     &>input, &>.el-icon {
       height: 2.4rem;
     }

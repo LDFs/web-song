@@ -1,5 +1,5 @@
 <template>
-  <div class="outline-container" 
+  <div class="outline-container out-container" 
     :style="{borderTop: tb,borderRight: rb,borderBottom: bb,borderLeft: lb}">
     <div class="outline-left" :style="{width: leftWidth, borderRight: rb}">
       <slot name="left"></slot>
@@ -55,8 +55,8 @@ if(borders.length == 1) {
 
 <style lang="scss" scoped>
 .outline-container {
-  width: 54vw;
-  min-width: 620px;
+  // width: 54vw;
+  // min-width: 620px;
   display: flex;
   padding: 0 1rem;
 }

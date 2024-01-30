@@ -1,5 +1,5 @@
 <template>
-  <div class="artist-container">
+  <div class="artist-container out-container">
     <div class="menu">
       <div
         class="menu-item"
@@ -115,8 +115,8 @@ function gotoSongs(id){
 
 <style lang="scss" scoped>
 .artist-container {
-  width: 54vw;
-  min-width: 620px;
+  // width: 54vw;
+  // min-width: 620px;
   display: flex;
   border-left: 1px solid #dedede;
   .menu {
