@@ -6,7 +6,6 @@
   ></div>
   <OutlineArchi :border="'0 1'" v-if="Object.keys(songDetail).length > 0">
     <template v-slot:left>
-      <audio autoplay ref="audioRef"></audio>
       <div>
         <div class="top-info">
           <div class="song-cover">
@@ -111,6 +110,7 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import { getSongDetail, getSongLyric, getComments, getSongUrl } from '@/network/getSongsInfo'
 import { getSongRelatedLists } from '@/network/getPlayList'
 import { getParamsByKey } from '@/utils/utils'
@@ -119,6 +119,7 @@ import LRItem from '@/common/LRItem.vue'
 
 import ThumbUp from '@/components/icons/IconThumbUp.vue'
 
+const store = useStore()
 const route = useRoute()
 const router = useRouter()
 const path = computed(() => route.fullPath)
@@ -130,27 +131,25 @@ const songDetail = ref({})
 getSongDetail(id.value).then((res) => {
   songDetail.value = res.data.songs[0]
 })
-const songUrl = ref("")
+const songUrl = ref('')
 const params = {
   id: id.value,
   level: 'standard'
 }
-getSongUrl(params).then(res => {
+getSongUrl(params).then((res) => {
   songUrl.value = res.data.data[0].url
-  audioRef.value.src = songUrl.value
 })
 
-
-const audioRef = ref(null)
-function playAudio(){
-  if(audioRef.value){
-    audioRef.value.play()
-  }
-}
-function pauseAudio(){
-  if(audioRef.value){
-    audioRef.value.pause()
-  }
+function playAudio() {
+  store.commit('setSongInfo', {
+    id: id.value,
+    name: songDetail.value.name,
+    url: songUrl.value,
+    artists: songDetail.value.ar,
+    album: songDetail.value.al,
+    dt: songDetail.value.dt
+  })
+  store.commit('setIsPlay', true)
 }
 
 const lyric = ref('')
@@ -234,7 +233,7 @@ function gotoList(id) {
 .cover {
   background-repeat: no-repeat;
   background-position: center;
-  background-size: cover;   // 让背景图片填充整个背景
+  background-size: cover; // 让背景图片填充整个背景
   opacity: 0.6;
   z-index: -2;
   width: 100vw;
@@ -244,7 +243,7 @@ function gotoList(id) {
   right: 0;
   bottom: 0;
   left: 0;
-  filter: blur(10px);   // 虚化当前元素
+  filter: blur(10px); // 虚化当前元素
 }
 
 .top-info {
