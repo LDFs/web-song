@@ -11,7 +11,7 @@ const store = createStore({
       dt: null
     },
     curPlayList: [],
-    curIndex: 0,   // 当前播放歌曲在列表中的下标
+    curIndex: -1,   // 当前播放歌曲在列表中的下标
     isPlay: false
   },
   mutations: {
@@ -24,6 +24,11 @@ const store = createStore({
     },
     setCurList(state, list){
       state.curPlayList = list
+      state.curIndex = 0
+    },
+    pushCurList(state, item){
+      state.curPlayList.push(item)
+      state.curIndex += 1
     },
     setCurIndex(state, index){
       state.curIndex = index

@@ -42,10 +42,13 @@ function getSearchResult(keywords, type){
 }
 
 // 获取歌曲url
-function getSongUrl(params){
+function getSongUrl(id, level='standard'){
   return request({
     url: '/song/url/v1',
-    params
+    params: {
+      id,
+      level
+    }
   })
 }
 

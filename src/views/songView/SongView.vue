@@ -35,10 +35,6 @@
                 <el-icon><VideoPlay /></el-icon>
                 <div>播放</div>
               </button>
-              <button class="play-btn" @click="pauseAudio">
-                <el-icon><VideoPlay /></el-icon>
-                <div>暂停</div>
-              </button>
             </div>
           </div>
         </div>
@@ -132,11 +128,8 @@ getSongDetail(id.value).then((res) => {
   songDetail.value = res.data.songs[0]
 })
 const songUrl = ref('')
-const params = {
-  id: id.value,
-  level: 'standard'
-}
-getSongUrl(params).then((res) => {
+
+getSongUrl(id.value).then((res) => {
   songUrl.value = res.data.data[0].url
 })
 
@@ -150,6 +143,7 @@ function playAudio() {
     dt: songDetail.value.dt
   })
   store.commit('setIsPlay', true)
+  store.commit('pushCurList', songDetail.value)
 }
 
 const lyric = ref('')
