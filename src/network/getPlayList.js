@@ -10,23 +10,24 @@ function getHomePageCoverList(){
 }
 
 // 根据类型获取歌单
-function getRecomMusicListByCat(cat) {
+function getRecomMusicListByCat(cat='全部', order='hot', limit=20, offset=0) {
   return request({
-    url: 'top/playlist',  // /top/playlist/highquality
+    url: 'top/playlist',
     params: {
-      offset: 20,
-      limit: 10,
-      order: cat
+      offset,
+      limit,
+      order,
+      cat
     }
   })
 }
 
 // 获取精品歌单
-function getHighqualityList(cat){
+function getHighqualityList(cat='全部'){
   return request({
     url: '/top/playlist/highquality',
     params: {
-      cat: cat
+      cat
     }
   })
 }

@@ -12,7 +12,8 @@ const store = createStore({
     },
     curPlayList: [],
     curIndex: -1,   // 当前播放歌曲在列表中的下标
-    isPlay: false
+    isPlay: false,
+    curPlayDt: 0
   },
   mutations: {
     setSongInfo(state, info){
@@ -27,11 +28,22 @@ const store = createStore({
       state.curIndex = 0
     },
     pushCurList(state, item){
-      state.curPlayList.push(item)
-      state.curIndex += 1
+      // 避免数组元素重复
+      const tmp = []
+      state.curPlayList.forEach(t => {
+        if(item.id != t.id){
+          tmp.push(t)
+        }
+      })
+      tmp.push(item)
+      state.curPlayList = tmp
+      state.curIndex = tmp.length-1
     },
     setCurIndex(state, index){
       state.curIndex = index
+    },
+    setCurPlayDt(state, dt){
+      state.curPlayDt = dt
     }
   }
 })

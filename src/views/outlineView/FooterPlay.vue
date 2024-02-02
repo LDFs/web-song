@@ -17,7 +17,7 @@
       <div class="infos-right">
         <div v-if="songInfo.name" class="song-artists">
           <div>{{ songInfo.name }}</div>
-          <div>
+          <div style="color: #9f9f9f;">
             <span v-for="(item, index) in songInfo.artists" :key="item.id"
               >{{ item.name }}<span v-if="index < songInfo.artists.length - 1">/</span></span
             >
@@ -25,15 +25,17 @@
         </div>
         <div v-else>没有播放的歌曲</div>
         <div class="progress-bar">
-          <el-slider v-model="curPercent" style="flex-grow: 1" />
-          <span v-if="songInfo.dt"> {{ curDt }}/{{ songInfo.dt }} </span>
+          <el-slider v-model="currentDuration" :max="songInfo.dt / 1000" style="flex-grow: 1" 
+            :show-tooltip="false" @change="musicSliderHandleChange"/>
+          <span v-if="songInfo.dt"> {{ currentDtText }}/{{ formatMS(songInfo.dt) }} </span>
           <span v-else>00:00/00:00</span>
         </div>
       </div>
     </div>
     <div style="position: relative;">
-      <el-slider v-if="showVolumn" v-model="volumnValue" vertical height="10vh" style="position: absolute; bottom: 6.4vh;left:-4px;" />
-      <IconVolumn class="control-icon" @click="changeVolumn" />
+      <el-slider v-if="showVolumn" v-model="volumnValue" vertical height="10vh" @change="musicVolumnChange" 
+        style="position: absolute; bottom: 6.4vh;left:-4px;" :show-tooltip="false" />
+      <IconVolumn class="control-icon" @click="exchangeVolumnSlider" />
       <IconCircle class="control-icon" />
       <IconMList class="control-icon" @click="showList" />
     </div>
@@ -97,21 +99,20 @@ const enterThis = ref(true)
 const songInfo = ref(computed(() => store.state.curSongInfo))
 const isPlay = ref(computed(() => store.state.isPlay))
 
-const curPercent = ref(10) // 当前播放的进度条比例
-const curDt = ref(10) // 当前播放的进度
 const audioRef = ref(null)
-if (audioRef.value) {
-  audioRef.value.src = songInfo.value.url
-}
-if (isPlay.value && audioRef.value) {
-  if (!audioRef.value.src) {
-    audioRef.value.src = songInfo.value.url
-  }
-  audioRef.value.play()
-}
+// if (audioRef.value) {
+//   audioRef.value.src = songInfo.value.url
+// }
+// if (isPlay.value && audioRef.value) {
+//   if (!audioRef.value.src) {
+//     audioRef.value.src = songInfo.value.url
+//   }
+//   audioRef.value.play()
+// }
 
 watch(songInfo, (v) => {
-  audioRef.value.src = v.url
+  audioRef.value.src = v.url;
+  setAudioTagsInfo()
 })
 
 watch(isPlay, (v) => {
@@ -119,11 +120,46 @@ watch(isPlay, (v) => {
     audioRef.value.play()
   }
 })
+// setAudioTagsInfo()
+const currentDuration = ref(0)   // 当前播放的进度
+function setAudioTagsInfo() {
+  // if (songInfo.value) {
+  //   audioRef.value.src = songInfo.value.url;
+  // }
+  musicVolumnChange();   // 设置音量
+  // 播放音乐时，audio的信息自动变化，把变化的信息更新到this中
+  audioRef.value.addEventListener("timeupdate", ()=> {
+    currentDuration.value = audioRef.value.currentTime;
+    // 当非VIP用户播放VIP歌曲时，免费部分放完就会停止或切歌
+    if (audioRef.value.currentTime >= audioRef.value.duration && curList.value.length > 1) {
+      playChange(2)
+    }
+  })
+}
+const currentDtText = computed(()=>{
+  if(currentDuration.value == 0) return '00:00'
+  let s = Math.floor(currentDuration.value % 60)
+  let m = Math.floor(currentDuration.value / 60)
+  let ss = s > 10 ? s : `0${s}`
+  let mm = m > 10 ? m : `0${m}`
+  return `${mm}:${ss}`
+})
+// 手动改变音乐播放的进度
+function musicSliderHandleChange(){
+  audioRef.value.currentTime = currentDuration.value
+}
+watch(currentDuration, v=>{
+  store.commit('setCurPlayDt', v)
+})
 
 function playAudio() {
-  if (audioRef.value && audioRef.value.src) {
+  if (audioRef.value) {
+    if(!audioRef.value.src && songInfo.value?.url){
+      audioRef.value.src = songInfo.value.url;
+    }
     audioRef.value.play()
     store.commit('setIsPlay', true)
+    setAudioTagsInfo()
   }
 }
 function pauseAudio() {
@@ -165,11 +201,16 @@ function showList(){
   drawer.value = true
 }
 
-const volumnValue = ref(10)
+const volumnValue = ref(30)
 const showVolumn = ref(false)
-function changeVolumn(){
+function exchangeVolumnSlider(){
   showVolumn.value = !showVolumn.value
 }
+function musicVolumnChange(){
+  audioRef.value.volume = volumnValue.value / 100
+}
+
+
 </script>
 
 <style lang="scss" scoped>

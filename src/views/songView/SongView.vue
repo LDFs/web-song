@@ -39,7 +39,7 @@
           </div>
         </div>
         <div class="lyric-container">
-          <div class="lyrics" v-if="Object.keys(lyrics).length > 0">
+          <div class="lyrics" ref="lyricRef" v-if="Object.keys(lyrics).length > 0">
             <div
               v-for="(item, i) in lyrics"
               :key="i"
@@ -149,6 +149,8 @@ function playAudio() {
 const lyric = ref('')
 const lyrics = ref([])
 const lyricIndex = ref(0)
+const curDuration = ref(computed(() => store.state.curPlayDt))
+const lyricRef = ref(null)
 getSongLyric(id.value).then((res) => {
   lyric.value = res.data.lrc.lyric
   createLrcObj(lyric.value)
@@ -194,6 +196,42 @@ function createLrcObj(lrc) {
   oLRC.ms.sort((a, b) => a.t - b.t)
   lyrics.value = oLRC.ms
 }
+
+watch(curDuration, (newD) => {
+  // this.duration = newD
+  for (let i = 0; i < lyrics.value.length; i++) {
+    if (newD <= parseFloat(lyrics.value[i].t)) {
+      if (lyricIndex.value === i - 1) break
+      // 找到比当前时间点 大一点的后一位的歌词的索引值
+      lyricIndex.value = i - 1
+      //当前距离上方的距离  控制歌词上下滚动
+      let currentTemp = lyricRef.value.style.marginTop
+      currentTemp = currentTemp.substr(0, currentTemp.length - 2)
+      currentTemp = parseInt(currentTemp) // 滚动距离
+      if (i > 5) {
+        //第五句歌词之后 开始使用定位
+        /**
+         * 例子
+         * 第一句 margin-top 25px
+         * 第二句 margin-top 50px
+         * 第三句 margin-top 75px;
+         * 以此类推
+         *  ***计算出给一句歌词一个距离顶部的一个距离
+         *  (每次只需要切换到当前距离顶部的位置 实现歌词滚动)
+         *  顶部的位置 = 当前高亮歌词索引 * 25 +'px'   ***
+         * @type {number}
+         */
+        currentTemp = (i - 5) * -5
+        lyricRef.value.style.marginTop = currentTemp + 'px' // 设置样式
+      }
+      //如果当前是最后一句歌词 代表歌曲要放送结束了 将我们的lyricIndex(当前歌词索引值还原成0便于下一曲使用)
+      if (lyricIndex.value === lyrics.value.length - 1) {
+        lyricIndex.value = 0
+      }
+      break
+    }
+  }
+})
 
 const hotComments = ref([])
 const comments = ref([])

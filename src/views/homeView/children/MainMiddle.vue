@@ -40,7 +40,7 @@
 <script setup>
 import {ref} from 'vue'
 import {useRouter} from 'vue-router'
-import {getRecomMusicList, getHighqualityList, getNewAlbum} from '@/network/getPlayList'
+import {getRecomMusicList, getRecomMusicListByCat, getNewAlbum} from '@/network/getPlayList'
 import {getTopArtists, getArtistDetailById} from '@/network/getArtists'
 
 import LittleNav from '@/common/LittleNav.vue';
@@ -54,7 +54,7 @@ const newAlbum = ref([])
 const artistsList = ref([])
 
 // 热门推荐
-getHighqualityList().then(res => {
+getRecomMusicListByCat('全部', 'hot').then(res => {
   const list = res.data.playlists
   for(let i = 0; i < 8; i++){
     recommandCoverList.value.push({

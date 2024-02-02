@@ -1,5 +1,5 @@
 <template>
-  <div class="whole-page">
+  <div class="whole-page out-container">
     <div class="detail-container">
       <div class="detail-header">
         <div class="cover-img"><img :src="detailInfo.coverImgUrl" alt="" /></div>
@@ -141,9 +141,8 @@ function gotoArtist(id){
 
 <style lang="scss" scoped>
 .whole-page {
-  width: 54vw;
-  min-width: 620px;
-  border: 1px solid #c1bfbf;
+  border-left: 1px solid #c1bfbf;
+  border-right: 1px solid #c1bfbf;
   display: flex;
 }
 .detail-container {
