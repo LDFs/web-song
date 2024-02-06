@@ -2,14 +2,8 @@ import {createStore} from 'vuex'
 
 const store = createStore({
   state: {
-    curSongInfo: {
-      id: null,
-      name: null,
-      url: '',
-      artists: [],
-      album: null,
-      dt: null
-    },
+    curSongInfo: {},
+    curSongUrlInfo: {},
     curPlayList: [],
     curIndex: -1,   // 当前播放歌曲在列表中的下标
     isPlay: false,
@@ -19,6 +13,9 @@ const store = createStore({
     setSongInfo(state, info){
       if(info.id)
         state.curSongInfo = info
+    },
+    setSongUrlInfo(state, info){
+      state.curSongUrlInfo = info
     },
     setIsPlay(state, bool){
       state.isPlay = bool

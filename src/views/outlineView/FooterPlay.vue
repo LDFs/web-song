@@ -12,14 +12,14 @@
       <IconNext class="control-icon" @click="playChange(2)" />
     </div>
     <div class="infos">
-      <img v-if="songInfo.album" :src="songInfo.album.picUrl" alt="" class="album-pic" />
+      <img v-if="songInfo.al" :src="songInfo.al.picUrl" alt="" class="album-pic" />
       <div v-else class="album-pic not-pic"></div>
       <div class="infos-right">
         <div v-if="songInfo.name" class="song-artists">
-          <div>{{ songInfo.name }}</div>
-          <div style="color: #9f9f9f;">
-            <span v-for="(item, index) in songInfo.artists" :key="item.id"
-              >{{ item.name }}<span v-if="index < songInfo.artists.length - 1">/</span></span
+          <div class="play-song-name">{{ songInfo.name }}</div>
+          <div class="play-song-name" style="color: #9f9f9f;">
+            <span v-for="(item, index) in songInfo.ar" :key="item.id"
+              >{{ item.name }}<span v-if="index < songInfo.ar.length - 1">/</span></span
             >
           </div>
         </div>
@@ -27,6 +27,8 @@
         <div class="progress-bar">
           <el-slider v-model="currentDuration" :max="songInfo.dt / 1000" style="flex-grow: 1" 
             :show-tooltip="false" @change="musicSliderHandleChange"/>
+          <el-slider v-if="songUrlInfo.freeTrialInfo && Object.keys(songUrlInfo.freeTrialInfo).length > 0" v-model="freeTrail" :max="songInfo.dt / 1000" :show-tooltip="false" 
+            style="position: absolute;" />
           <span v-if="songInfo.dt"> {{ currentDtText }}/{{ formatMS(songInfo.dt) }} </span>
           <span v-else>00:00/00:00</span>
         </div>
@@ -97,6 +99,7 @@ const enterThis = ref(true)
 // }
 
 const songInfo = ref(computed(() => store.state.curSongInfo))
+const songUrlInfo = ref(computed(() => store.state.curSongUrlInfo))
 const isPlay = ref(computed(() => store.state.isPlay))
 
 const audioRef = ref(null)
@@ -110,7 +113,7 @@ const audioRef = ref(null)
 //   audioRef.value.play()
 // }
 
-watch(songInfo, (v) => {
+watch(songUrlInfo, (v) => {
   audioRef.value.src = v.url;
   setAudioTagsInfo()
 })
@@ -122,6 +125,7 @@ watch(isPlay, (v) => {
 })
 // setAudioTagsInfo()
 const currentDuration = ref(0)   // 当前播放的进度
+const freeTrail = ref([0, 0])
 function setAudioTagsInfo() {
   // if (songInfo.value) {
   //   audioRef.value.src = songInfo.value.url;
@@ -154,8 +158,8 @@ watch(currentDuration, v=>{
 
 function playAudio() {
   if (audioRef.value) {
-    if(!audioRef.value.src && songInfo.value?.url){
-      audioRef.value.src = songInfo.value.url;
+    if(!audioRef.value.src && songUrlInfo.value?.url){
+      audioRef.value.src = songUrlInfo.value.url;
     }
     audioRef.value.play()
     store.commit('setIsPlay', true)
@@ -181,14 +185,8 @@ function playChange(m) {
     }
     const song = curList.value[nextI]
     getSongUrl(song.id).then((res) => {
-      store.commit('setSongInfo', {
-        id: song.id,
-        name: song.name,
-        url: res.data.data[0].url,
-        artists: song.ar,
-        album: song.al,
-        dt: song.dt
-      })
+      store.commit('setSongInfo', song)
+      store.commit('setSongUrlInfo', res.data.data[0])
       store.commit('setIsPlay', true)
       store.commit('setCurIndex', nextI)
     })
@@ -220,11 +218,12 @@ function musicVolumnChange(){
   background-color: #3f3e3e;
   padding: 0.2rem 1rem;
   width: 100vw;
-  height: 6vh;
+  min-height: 6vh;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.4rem;
+  z-index: 1;
   .control-icon {
     width: 1.4rem;
     height: 1.4rem;
@@ -253,9 +252,16 @@ function musicVolumnChange(){
       display: flex;
       gap: 0.6rem;
     }
+    .play-song-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-wrap: nowrap;
+      max-width: 50%;
+    }
     .progress-bar {
       display: flex;
       gap: 0.2rem;
+      position: relative;
     }
   }
 }

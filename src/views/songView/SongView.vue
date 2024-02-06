@@ -34,6 +34,7 @@
               <button class="play-btn" @click="playAudio">
                 <el-icon><VideoPlay /></el-icon>
                 <div>播放</div>
+                <div v-if="songUrlInfo.freeTrialInfo && Object.keys(songUrlInfo.freeTrialInfo).length > 0">VIP尊享</div>
               </button>
             </div>
           </div>
@@ -120,6 +121,7 @@ const route = useRoute()
 const router = useRouter()
 const path = computed(() => route.fullPath)
 const id = ref(getParamsByKey(route.fullPath, 'id'))
+const curPlaySongId = ref(computed(()=>store.state.curSongInfo.id))
 watch(path, (v) => {
   id.value = getParamsByKey(v, 'id')
 })
@@ -127,21 +129,16 @@ const songDetail = ref({})
 getSongDetail(id.value).then((res) => {
   songDetail.value = res.data.songs[0]
 })
-const songUrl = ref('')
+const songUrlInfo = ref({})
 
 getSongUrl(id.value).then((res) => {
-  songUrl.value = res.data.data[0].url
+  // console.log(res.data.data[0].freeTrialInfo)
+  songUrlInfo.value = res.data.data[0]
 })
 
 function playAudio() {
-  store.commit('setSongInfo', {
-    id: id.value,
-    name: songDetail.value.name,
-    url: songUrl.value,
-    artists: songDetail.value.ar,
-    album: songDetail.value.al,
-    dt: songDetail.value.dt
-  })
+  store.commit('setSongInfo', songDetail.value)
+  store.commit('setSongUrlInfo', songUrlInfo.value)
   store.commit('setIsPlay', true)
   store.commit('pushCurList', songDetail.value)
 }
@@ -149,7 +146,7 @@ function playAudio() {
 const lyric = ref('')
 const lyrics = ref([])
 const lyricIndex = ref(0)
-const curDuration = ref(computed(() => store.state.curPlayDt))
+const curDuration = ref(id.value == String(curPlaySongId.value) ? computed(() => store.state.curPlayDt) : 0)
 const lyricRef = ref(null)
 getSongLyric(id.value).then((res) => {
   lyric.value = res.data.lrc.lyric
