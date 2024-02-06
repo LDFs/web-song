@@ -80,8 +80,9 @@ getTopArtists().then(res => {
     getArtistDetailById(item.id).then(res => {
       const desc = res.data.data.identify.imageDesc
       artistsList.value.push({
-        name: item.name,
-        picUrl: item.picUrl,
+        id: item.id,
+        title: item.name,
+        imgUrl: item.picUrl,
         desc: desc
       })
     })

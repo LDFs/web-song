@@ -58,13 +58,14 @@
     <template v-slot:right>
       <div>TA的其他热门专辑</div>
       <div v-if="hotAlbums.length > 0" class="hot-albums">
-        <div v-for="item in hotAlbums" :key="item.id" class="item" @click="gotoAlbum(item.id)">
+        <LRItem v-for="item in hotAlbums" :key="item.id" class="item" :item="item" :jumpUrl="'/albumDetail'" />
+        <!-- <div v-for="item in hotAlbums" :key="item.id" class="item" @click="gotoAlbum(item.id)">
           <img :src="item.picUrl" alt="" width="100%" class="link-text" />
           <div class="item-right">
             <div>{{ item.name }}</div>
             <div class="nickname">{{ formatDateByNumber(item.publishTime) }}</div>
           </div>
-        </div>
+        </div> -->
       </div>
     </template>
   </OutlineArchi>
@@ -76,6 +77,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { getParamsByKey, formatDateByNumber, formatMS } from '@/utils/utils'
 import { getAlbumDetail, getArtHotAlbum } from '@/network/getPlayList'
 import OutlineArchi from '@/common/OutlineArchi.vue'
+import LRItem from '@/common/LRItem.vue'
 
 const route = useRoute()
 const router = useRouter()

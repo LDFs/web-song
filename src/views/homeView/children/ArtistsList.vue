@@ -4,17 +4,12 @@
       <span>入驻歌手</span>
       <span class="see-all">查看全部<el-icon><ArrowRight /></el-icon></span>
     </div>
-    <div class="artist-item" v-for="item in artistsList" :key="item.name">
-      <img :src="item.picUrl" alt="">
-      <div class="art-right">
-        <div class="item-name">{{ item.name }}</div>
-        <div class="item-desc">{{ item.desc }}</div>
-      </div>
-    </div>
+    <LRItem class="artist-item" v-for="item in artistsList" :key="item.name" :item="item" />
   </div>
 </template>
 
 <script setup>
+import LRItem from '@/common/LRItem.vue';
 defineProps({
   artistsList: Array
 })

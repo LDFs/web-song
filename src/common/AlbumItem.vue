@@ -6,7 +6,7 @@
       <span class="border"></span>
       <img @load='imgOnLoad' :src="item.picUrl" alt="" >
     </div>
-    <div class="title ">{{ item.name }}</div>
+    <div class="title text-line2">{{ item.name }}</div>
     <div class="artist text-line2" :title="allArtists">
       <span v-for="(ar, index) in item.artists" :key="ar.id">{{ ar.name }}<span v-if="index < item.artists.length-1">/</span>
       </span>

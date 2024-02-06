@@ -39,18 +39,28 @@
         </div>
         <div>
           <el-table :data="musicLists" style="width: 100%" @cell-click="clickItem">
-            <el-table-column type="index" :index="index => index+1" />
-            <el-table-column prop="name" class-name="link-text" label="歌曲标题" width="180" />
+            <el-table-column type="index" :index="(index) => index + 1" />
+            <el-table-column
+              prop="name"
+              class-name="link-text"
+              label="歌曲标题"
+              width="180"
+            />
             <el-table-column prop="dlong" label="时长" width="180" />
-            <el-table-column class-name="link-text" label="歌手" >
+            <el-table-column class-name="link-text" label="歌手">
               <template #default="scope">
-                <span v-for="(item, index) in scope.row.artists" :key="item.id" @click="gotoArtist(item.id)"
-                  class="link-text">
-                  {{ item.name }}<span v-if="index < scope.row.artists.length-1">/</span>
+                <span
+                  v-for="(item, index) in scope.row.artists"
+                  :key="item.id"
+                  @click="gotoArtist(item.id)"
+                  class="link-text"
+                >
+                  {{ item.name
+                  }}<span v-if="index < scope.row.artists.length - 1">/</span>
                 </span>
               </template>
             </el-table-column>
-            <el-table-column prop="album.name"  class-name="link-text" label="专辑" />
+            <el-table-column prop="album.name" class-name="link-text" label="专辑" />
           </el-table>
         </div>
       </div>
@@ -58,85 +68,103 @@
     <div class="whole-right">
       <div class="right-title">喜欢这个歌单的人</div>
       <div class="avaters">
-        <img v-for="item in subscribes" :src="item.avatarUrl" :key="item.userId" alt="">
+        <img v-for="item in subscribes" :src="item.avatarUrl" :key="item.userId" alt="" />
       </div>
       <div class="right-title top-bot-mar">相关推荐</div>
-      <div v-for="item in relatedList" :key="item.id" class="item">
-        <img :src="item.coverImgUrl" alt="">
-        <div class="item-right">
-          <div>{{ item.name }}</div>
-          <div class="nickname">by {{ item.creator.nickname }}</div>
-        </div>
-      </div>
+      <LRItem
+        v-for="item in relatedList"
+        :key="item.id"
+        class="item"
+        :item="item"
+        :jumpUrl="'/playlistDetail'"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { getListDetail, getRelatedList } from '@/network/getPlayList'
-import { getParamsByKey, formatDateByNumber, formatMS } from '@/utils/utils'
+import { ref, computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { getListDetail, getRelatedList } from "@/network/getPlayList";
+import { getParamsByKey, formatDateByNumber, formatMS } from "@/utils/utils";
+import LRItem from "@/common/LRItem.vue";
 
-const route = useRoute()
-const router = useRouter()
-const path = route.fullPath
-const id = getParamsByKey(path, 'id')
+const route = useRoute();
+const router = useRouter();
+const path = computed(() => route.fullPath);
+const id = ref(getParamsByKey(path.value, "id"));
+watch(path, (v) => {
+  id.value = getParamsByKey(v, "id");
+  updateInfo();
+});
 
-const page = ref(0)
-const count = ref(20)
+const page = ref(0);
+const count = ref(20);
 
-const detailInfo = ref({})
-const musicLists = ref([])
-const creatTime = ref('')
-const creator = ref({})
-const subscribes = ref([])
-getListDetail(id).then((res) => {
-  // console.log(res.data.playlist)
-  detailInfo.value = res.data.playlist
-  creatTime.value = formatDateByNumber(detailInfo.value.createTime)
-  creator.value = res.data.playlist.creator
-  subscribes.value = res.data.playlist.subscribers.slice(0, 8)
+const detailInfo = ref({});
+const musicLists = ref([]);
+const creatTime = ref("");
+const creator = ref({});
+const subscribes = ref([]);
+updateInfo();
+function updateInfo() {
+  getListDetail(id.value).then((res) => {
+    // console.log(res.data.playlist)
+    detailInfo.value = res.data.playlist;
+    creatTime.value = formatDateByNumber(detailInfo.value.createTime);
+    creator.value = res.data.playlist.creator;
+    subscribes.value = res.data.playlist.subscribers.slice(0, 8);
+    musicLists.value = [];
 
-  const m = res.data.playlist.tracks.slice(page.value * count.value, (page.value+1)*count.value)
-  // 处理每首歌的时长
-  m.map((item) => {
-    let d = formatMS(item.dt)
-    musicLists.value.push({
+    const m = res.data.playlist.tracks.slice(
+      page.value * count.value,
+      (page.value + 1) * count.value
+    );
+    // 处理每首歌的时长
+    m.map((item) => {
+      let d = formatMS(item.dt);
+      musicLists.value.push({
+        id: item.id,
+        dt: item.dt,
+        dlong: d,
+        name: item.name,
+        artists: item.ar,
+        album: item.al,
+      });
+    });
+  });
+}
+
+const relatedList = ref([]);
+getRelatedList(id.value).then((res) => {
+  relatedList.value = res.data.playlists.map((item) => {
+    return {
       id: item.id,
-      dt: item.dt,
-      dlong: d,
       name: item.name,
-      artists: item.ar,
-      album: item.al
-    })
-  })
-})
+      picUrl: item.coverImgUrl,
+      desc: `by ${item.creator.nickname}`,
+    };
+  });
+});
 
-const relatedList = ref([])
-getRelatedList(id).then(res => {
-  relatedList.value = res.data.playlists
-})
-
-function clickItem(row, column){
-  if(column.no === 1){
-    const id = row.id
-    router.push('/song?id='+id)
-  }else if (column.no === 4){
-    const id = row.album.id
-    router.push(`/albumDetail?id=${id}`)
+function clickItem(row, column) {
+  if (column.no === 1) {
+    const id = row.id;
+    router.push("/song?id=" + id);
+  } else if (column.no === 4) {
+    const id = row.album.id;
+    router.push(`/albumDetail?id=${id}`);
   }
 }
-function gotoArtist(id){
+function gotoArtist(id) {
   // console.log(id)
-  router.push('/artistSongs?id='+id)
+  router.push("/artistSongs?id=" + id);
 }
 </script>
 <style>
 .link-text {
   cursor: pointer;
 }
-
 </style>
 
 <style lang="scss" scoped>
@@ -201,8 +229,8 @@ function gotoArtist(id){
   }
 }
 .title {
-      font-size: 1.2rem;
-    }
+  font-size: 1.2rem;
+}
 .tags span {
   border: 1px solid #e5e5e5;
   background-color: #f0f0f0;
@@ -222,12 +250,12 @@ function gotoArtist(id){
   padding-bottom: 6px;
   border-bottom: 2px solid rgb(239, 87, 22);
   .tiny-font {
-    font-size: .8rem;
+    font-size: 0.8rem;
     margin-left: 1rem;
     margin-right: 1rem;
   }
 }
-.link-text:hover{
+.link-text:hover {
   text-decoration: underline;
   cursor: hover;
 }
@@ -236,7 +264,7 @@ function gotoArtist(id){
   padding: 1rem;
   .right-title {
     font-weight: 700;
-    padding-bottom: .4rem;
+    padding-bottom: 0.4rem;
     border-bottom: 1px solid #7b7b7b;
   }
   .avaters {
