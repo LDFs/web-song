@@ -34,7 +34,12 @@
         <div class="list-title">歌曲列表</div>
         <el-table :data="songs" style="width: 100%" @cell-click="clickItem">
           <el-table-column type="index" :index="(index) => index + 1" />
-          <el-table-column prop="name" class-name="link-text" label="歌曲标题" width="180" />
+          <el-table-column
+            prop="name"
+            class-name="link-text"
+            label="歌曲标题"
+            width="180"
+          />
           <el-table-column label="时长" width="180">
             <template #default="scope">
               {{ formatMS(scope.row.dt) }}
@@ -58,66 +63,69 @@
     <template v-slot:right>
       <div>TA的其他热门专辑</div>
       <div v-if="hotAlbums.length > 0" class="hot-albums">
-        <LRItem v-for="item in hotAlbums" :key="item.id" class="item" :item="item" :jumpUrl="'/albumDetail'" />
-        <!-- <div v-for="item in hotAlbums" :key="item.id" class="item" @click="gotoAlbum(item.id)">
-          <img :src="item.picUrl" alt="" width="100%" class="link-text" />
-          <div class="item-right">
-            <div>{{ item.name }}</div>
-            <div class="nickname">{{ formatDateByNumber(item.publishTime) }}</div>
-          </div>
-        </div> -->
+        <LRItem
+          v-for="item in hotAlbums"
+          :key="item.id"
+          class="item"
+          :item="item"
+          :jumpUrl="'/albumDetail'"
+        />
       </div>
     </template>
   </OutlineArchi>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { getParamsByKey, formatDateByNumber, formatMS } from '@/utils/utils'
-import { getAlbumDetail, getArtHotAlbum } from '@/network/getPlayList'
-import OutlineArchi from '@/common/OutlineArchi.vue'
-import LRItem from '@/common/LRItem.vue'
+import { ref, computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { getParamsByKey, formatDateByNumber, formatMS } from "@/utils/utils";
+import { getAlbumDetail, getArtHotAlbum } from "@/network/getPlayList";
+import OutlineArchi from "@/common/OutlineArchi.vue";
+import LRItem from "@/common/LRItem.vue";
 
-const route = useRoute()
-const router = useRouter()
-const path = computed(() => route.fullPath)
-const id = ref(getParamsByKey(route.fullPath, 'id'))
+const route = useRoute();
+const router = useRouter();
+const path = computed(() => route.fullPath);
+const id = ref(getParamsByKey(route.fullPath, "id"));
 watch(path, (v) => {
-  id.value = getParamsByKey(v, 'id')
-  updateData()
-})
-const albumInfo = ref({})
-const songs = ref([])
-const publishTime = ref('')
-const hotAlbums = ref([])
-updateData()
-function updateData(){
+  id.value = getParamsByKey(v, "id");
+  updateData();
+});
+const albumInfo = ref({});
+const songs = ref([]);
+const publishTime = ref("");
+const hotAlbums = ref([]);
+updateData();
+function updateData() {
   getAlbumDetail(id.value).then((res) => {
-  albumInfo.value = res.data.album
-  songs.value = res.data.songs
-  publishTime.value = formatDateByNumber(albumInfo.value.publishTime)
-  const params = {
-    id: albumInfo.value.artist.id,
-    limit: 5
-  }
-  getArtHotAlbum(params).then((res) => {
-    hotAlbums.value = res.data.hotAlbums
-  })
-})
+    albumInfo.value = res.data.album;
+    songs.value = res.data.songs;
+    publishTime.value = formatDateByNumber(albumInfo.value.publishTime);
+    const params = {
+      id: albumInfo.value.artist.id,
+      limit: 5,
+    };
+    getArtHotAlbum(params).then((res) => {
+      hotAlbums.value = res.data.hotAlbums.map((item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          desc: formatDateByNumber(item.publishTime),
+          picUrl: item.picUrl,
+        };
+      });
+    });
+  });
 }
 
 function gotoArtist(id) {
-  router.push('/artistSongs?id=' + id)
+  router.push("/artistSongs?id=" + id);
 }
 function clickItem(row, column) {
   if (column.no === 1) {
-    const id = row.id
-    router.push('/song?id=' + id)
+    const id = row.id;
+    router.push("/song?id=" + id);
   }
-}
-function gotoAlbum(id) {
-  router.push(`/albumDetail?id=${id}`)
 }
 </script>
 <style>

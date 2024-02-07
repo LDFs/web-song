@@ -21,6 +21,7 @@
                   v-for="(item, index) in songDetail.ar"
                   :key="item.id"
                   @click="gotoArtist(item.id)"
+                  class="link-text"
                 >
                   {{ item.name }}<span v-if="index < songDetail.ar.length - 1">、</span>
                 </span>
@@ -28,19 +29,28 @@
             </div>
             <div class="album">
               <span class="lable">所属专辑：</span>
-              <span class="names">{{ songDetail.al.name }}</span>
+              <span class="names link-text" @click="gotoThisAlbum">{{
+                songDetail.al.name
+              }}</span>
             </div>
             <div class="contrl-btns">
               <button class="play-btn" @click="playAudio">
                 <el-icon><VideoPlay /></el-icon>
                 <div>播放</div>
-                <div v-if="songUrlInfo.freeTrialInfo && Object.keys(songUrlInfo.freeTrialInfo).length > 0">VIP尊享</div>
+                <div
+                  v-if="
+                    songUrlInfo.freeTrialInfo &&
+                    Object.keys(songUrlInfo.freeTrialInfo).length > 0
+                  "
+                >
+                  VIP尊享
+                </div>
               </button>
             </div>
           </div>
         </div>
-        <div class="lyric-container">
-          <div class="lyrics" ref="lyricRef" v-if="Object.keys(lyrics).length > 0">
+        <div class="lyric-container" ref="lyricRef">
+          <div class="lyrics" v-if="Object.keys(lyrics).length > 0">
             <div
               v-for="(item, i) in lyrics"
               :key="i"
@@ -58,7 +68,8 @@
               <img :src="item.user.avatarUrl" alt="" />
               <div class="texts">
                 <p>
-                  <span class="user-name">{{ item.user.nickname }}：</span>{{ item.content }}
+                  <span class="user-name">{{ item.user.nickname }}：</span
+                  >{{ item.content }}
                 </p>
                 <div class="time-str">
                   <div>{{ item.timeStr }}</div>
@@ -105,156 +116,193 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useStore } from 'vuex'
-import { getSongDetail, getSongLyric, getComments, getSongUrl } from '@/network/getSongsInfo'
-import { getSongRelatedLists } from '@/network/getPlayList'
-import { getParamsByKey } from '@/utils/utils'
-import OutlineArchi from '@/common/OutlineArchi.vue'
-import LRItem from '@/common/LRItem.vue'
+import { ref, watch, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
+import {
+  getSongDetail,
+  getSongLyric,
+  getComments,
+  getSongUrl,
+} from "@/network/getSongsInfo";
+import { getSongRelatedLists } from "@/network/getPlayList";
+import { getParamsByKey } from "@/utils/utils";
+import OutlineArchi from "@/common/OutlineArchi.vue";
+import LRItem from "@/common/LRItem.vue";
 
-import ThumbUp from '@/components/icons/IconThumbUp.vue'
+import ThumbUp from "@/components/icons/IconThumbUp.vue";
 
-const store = useStore()
-const route = useRoute()
-const router = useRouter()
-const path = computed(() => route.fullPath)
-const id = ref(getParamsByKey(route.fullPath, 'id'))
-const curPlaySongId = ref(computed(()=>store.state.curSongInfo.id))
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
+const path = computed(() => route.fullPath);
+const id = ref(getParamsByKey(route.fullPath, "id"));
+const curPlaySongId = ref(computed(() => store.state.curSongInfo.id));
 watch(path, (v) => {
-  id.value = getParamsByKey(v, 'id')
-})
-const songDetail = ref({})
-getSongDetail(id.value).then((res) => {
-  songDetail.value = res.data.songs[0]
-})
-const songUrlInfo = ref({})
+  id.value = getParamsByKey(v, "id");
+  updateInfo();
+});
+const songDetail = ref({});
+const songUrlInfo = ref({});
+const relatedList = ref([]);
+updateInfo();
 
-getSongUrl(id.value).then((res) => {
-  // console.log(res.data.data[0].freeTrialInfo)
-  songUrlInfo.value = res.data.data[0]
-})
+function updateInfo() {
+  getSongDetail(id.value).then((res) => {
+    songDetail.value = res.data.songs[0];
+  });
+  getSongUrl(id.value).then((res) => {
+    // console.log(res.data.data[0].freeTrialInfo)
+    songUrlInfo.value = res.data.data[0];
+  });
+  getSongLyric(id.value).then((res) => {
+    lyric.value = res.data.lrc.lyric;
+    createLrcObj(lyric.value);
+  });
+  getComments(id.value).then((res) => {
+    hotComments.value = res.data.hotComments;
+    comments.value = res.data.comments;
+  });
 
-function playAudio() {
-  store.commit('setSongInfo', songDetail.value)
-  store.commit('setSongUrlInfo', songUrlInfo.value)
-  store.commit('setIsPlay', true)
-  store.commit('pushCurList', songDetail.value)
+  getSongRelatedLists(id.value).then((res) => {
+    relatedList.value = [];
+    res.data.playlists.forEach((item) => {
+      relatedList.value.push({
+        id: item.id,
+        imgUrl: item.coverImgUrl,
+        title: item.name,
+        desc: `by ${item.creator.nickname}`,
+      });
+    });
+  });
 }
 
-const lyric = ref('')
-const lyrics = ref([])
-const lyricIndex = ref(0)
-const curDuration = ref(id.value == String(curPlaySongId.value) ? computed(() => store.state.curPlayDt) : 0)
-const lyricRef = ref(null)
-getSongLyric(id.value).then((res) => {
-  lyric.value = res.data.lrc.lyric
-  createLrcObj(lyric.value)
-})
+function playAudio() {
+  store.commit("setSongInfo", songDetail.value);
+  store.commit("setSongUrlInfo", songUrlInfo.value);
+  store.commit("setIsPlay", true);
+  store.commit("pushCurList", songDetail.value);
+}
+
+const lyric = ref("");
+const lyrics = ref([]);
+const lyricIndex = ref(0);
+const oneLyricHeight = ref(24);
+let curDuration = ref(
+  computed(() => {
+    if (id.value == String(curPlaySongId.value)) {
+      return store.state.curPlayDt;
+    } else return 0;
+  })
+);
+watch(curPlaySongId, (v) => {
+  if (v == id.value) curDuration = computed(() => store.state.curPlayDt);
+});
+const lyricRef = ref(null);
 
 function createLrcObj(lrc) {
   let oLRC = {
-    ms: []
-  }
-  if (lrc.length == 0) return
-  let lrcs = lrc.split('\n') // 存储每一句歌词
+    ms: [],
+  };
+  if (lrc.length == 0) return;
+  let lrcs = lrc.split("\n"); // 存储每一句歌词
   for (let i in lrcs) {
-    lrcs[i] = lrcs[i].replace(/(^\s*)|(\s*$)/g, '') // 去除前后空格
+    lrcs[i] = lrcs[i].replace(/(^\s*)|(\s*$)/g, ""); // 去除前后空格
     let t = lrcs[i].substring(
       // 一句歌词的时间，不要前后的中括号，如 00:13.866
-      lrcs[i].indexOf('[') + 1,
-      lrcs[i].indexOf(']')
-    )
-    let s = t.split(':') // 把时间按冒号分开
+      lrcs[i].indexOf("[") + 1,
+      lrcs[i].indexOf("]")
+    );
+    let s = t.split(":"); // 把时间按冒号分开
     if (isNaN(parseInt(s[0]))) {
       // 如果第一部分不是数字
       for (let i in oLRC) {
         // ？？刚开始时，oLRC里面只有ms啊
-        if (i != 'ms' && i == s[0].toLowerCase()) oLRC[i] = s[1]
+        if (i != "ms" && i == s[0].toLowerCase()) oLRC[i] = s[1];
       }
     } else {
-      let arr = lrcs[i].match(/\[(\d+:.+?)\]/g) // 提取数字字段，可能有多个，如取出一个为"[00:01.370]"
-      let start = 0
+      let arr = lrcs[i].match(/\[(\d+:.+?)\]/g); // 提取数字字段，可能有多个，如取出一个为"[00:01.370]"
+      let start = 0;
       for (let k in arr) {
-        start += arr[k].length // "[00:01.370]"的长度。计算歌词开始的位置
+        start += arr[k].length; // "[00:01.370]"的长度。计算歌词开始的位置
       }
-      let content = lrcs[i].substring(start) // 歌词内容
+      let content = lrcs[i].substring(start); // 歌词内容
       for (let k in arr) {
-        let t = arr[k].substring(1, arr[k].length - 1) // 除去 [] 的中间部分
-        let s = t.split(':')
+        let t = arr[k].substring(1, arr[k].length - 1); // 除去 [] 的中间部分
+        let s = t.split(":");
         oLRC.ms.push({
           t: (parseFloat(s[0]) * 60 + parseFloat(s[1])).toFixed(3),
-          c: content === '' ? '............' : content
-        })
+          c: content === "" ? "............" : content,
+        });
       }
     }
   }
-  oLRC.ms.sort((a, b) => a.t - b.t)
-  lyrics.value = oLRC.ms
+  oLRC.ms.sort((a, b) => a.t - b.t);
+  lyrics.value = oLRC.ms;
 }
 
-watch(curDuration, (newD) => {
-  // this.duration = newD
-  for (let i = 0; i < lyrics.value.length; i++) {
-    if (newD <= parseFloat(lyrics.value[i].t)) {
-      if (lyricIndex.value === i - 1) break
-      // 找到比当前时间点 大一点的后一位的歌词的索引值
-      lyricIndex.value = i - 1
-      //当前距离上方的距离  控制歌词上下滚动
-      let currentTemp = lyricRef.value.style.marginTop
-      currentTemp = currentTemp.substr(0, currentTemp.length - 2)
-      currentTemp = parseInt(currentTemp) // 滚动距离
-      if (i > 5) {
-        //第五句歌词之后 开始使用定位
-        /**
-         * 例子
-         * 第一句 margin-top 25px
-         * 第二句 margin-top 50px
-         * 第三句 margin-top 75px;
-         * 以此类推
-         *  ***计算出给一句歌词一个距离顶部的一个距离
-         *  (每次只需要切换到当前距离顶部的位置 实现歌词滚动)
-         *  顶部的位置 = 当前高亮歌词索引 * 25 +'px'   ***
-         * @type {number}
-         */
-        currentTemp = (i - 5) * -5
-        lyricRef.value.style.marginTop = currentTemp + 'px' // 设置样式
-      }
-      //如果当前是最后一句歌词 代表歌曲要放送结束了 将我们的lyricIndex(当前歌词索引值还原成0便于下一曲使用)
-      if (lyricIndex.value === lyrics.value.length - 1) {
-        lyricIndex.value = 0
-      }
-      break
+watch(lyricRef, (v) => {
+  if (v) {
+    if (v.children && v.children.length > 0 && v.children[0].children.length > 0) {
+      oneLyricHeight.value = v.children[0].children[0].offsetHeight;
     }
   }
-})
+});
+watch(
+  curDuration,
+  (newD) => {
+    // this.duration = newD
+    for (let i = 0; i < lyrics.value.length; i++) {
+      if (newD <= parseFloat(lyrics.value[i].t)) {
+        if (lyricIndex.value === i - 1) break;
+        // 找到比当前时间点 大一点的后一位的歌词的索引值
+        lyricIndex.value = i - 1;
+        //当前距离上方的距离  控制歌词上下滚动
+        let currentTemp = lyricRef.value.style.marginTop;
+        currentTemp = currentTemp.substr(0, currentTemp.length - 2);
+        currentTemp = parseInt(currentTemp); // 滚动距离
+        if (i > 6) {
+          //第五句歌词之后 开始使用定位
+          /**
+           * 例子
+           * 第一句 margin-top 25px
+           * 第二句 margin-top 50px
+           * 第三句 margin-top 75px;
+           * 以此类推
+           *  ***计算出给一句歌词一个距离顶部的一个距离
+           *  (每次只需要切换到当前距离顶部的位置 实现歌词滚动)
+           *  顶部的位置 = 当前高亮歌词索引 * 25 +'px'   ***
+           * @type {number}
+           */
+          currentTemp = (i - 6) * oneLyricHeight.value;
+          // lyricRef.value.style.marginTop = currentTemp + "rem"; // 设置样式
+          lyricRef.value.scrollTop = currentTemp;
+          // console.log("=-", currentTemp);
+        }
+        //如果当前是最后一句歌词 代表歌曲要放送结束了 将我们的lyricIndex(当前歌词索引值还原成0便于下一曲使用)
+        if (lyricIndex.value === lyrics.value.length - 1) {
+          lyricIndex.value = 0;
+        }
+        break;
+      }
+    }
+  },
+  {
+    immediate: true,
+  }
+);
 
-const hotComments = ref([])
-const comments = ref([])
-getComments(id.value).then((res) => {
-  hotComments.value = res.data.hotComments
-  comments.value = res.data.comments
-})
-
-const relatedList = ref([])
-getSongRelatedLists(id.value).then((res) => {
-  relatedList.value = []
-  res.data.playlists.forEach((item) => {
-    relatedList.value.push({
-      id: item.id,
-      imgUrl: item.coverImgUrl,
-      title: item.name,
-      desc: `by ${item.creator.nickname}`
-    })
-  })
-})
+const hotComments = ref([]);
+const comments = ref([]);
 
 function gotoArtist(id) {
-  router.push('/artistSongs?id=' + id)
+  router.push("/artistSongs?id=" + id);
+}
+function gotoThisAlbum() {
+  router.push(`/albumDetail?id=${songDetail.value.al.id}`);
 }
 function gotoList(id) {
-  router.push('/playlistDetail?id=' + id)
+  router.push("/playlistDetail?id=" + id);
 }
 </script>
 
