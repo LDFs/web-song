@@ -25,7 +25,7 @@ const firstSubMenu = [
 
 const mouseBootom = ref(false)
 const listenMouse = function(e){  
-  if(Math.abs(e.clientY - window.innerHeight) < 2){
+  if(Math.abs(e.clientY - window.innerHeight) < 5){
     mouseBootom.value = true
   }else {
     mouseBootom.value = false

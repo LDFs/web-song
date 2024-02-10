@@ -1,6 +1,8 @@
 <template>
+  <!-- v-show="lockFixed || true" -->
   <div
-    v-show="enterThis"
+    
+    :style="{bottom: (lockFixed || enterThis ? 0 : '-8vh')}"
     class="footer-play-container"
     @mouseleave="mouseLeave"
     @mouseenter="mouseEnter"
@@ -70,6 +72,10 @@
       <IconMList class="control-icon" @click="showList" />
     </div>
     <audio autoplay ref="audioRef"></audio>
+    <div class="lock-fixed">
+    <IconLockOff v-if="!lockFixed" class="lock-item" @click="lockFooter" />
+    <IconLockOn v-if="lockFixed" class="lock-item" @click="unlockFooter" />
+  </div>
   </div>
   <el-drawer
     v-model="drawer"
@@ -78,13 +84,13 @@
     style="
       width: 50%;
       margin: 0 auto;
-      margin-bottom: 6vh;
+      margin-bottom: 8vh;
       background-color: #252424c4;
       color: #f4f4f4;
     "
     modal-class="over-mask"
   >
-    <div style="padding: 1rem">
+    <div style="padding: .2rem 1rem;">
       <div
         v-for="(item, index) in curList"
         :key="item.id"
@@ -125,42 +131,54 @@ import IconNext from "@/components/icons/IconNext.vue";
 import IconMList from "@/components/icons/IconMList.vue";
 import IconVolumn from "@/components/icons/IconVolumn.vue";
 import IconCircle from "@/components/icons/IconCircle.vue";
+import IconLockOff from "@/components/icons/IconLockOff.vue";
+import IconLockOn from "@/components/icons/IconLockOn.vue";
+
 
 const store = useStore();
 const router = useRouter();
 
+// 为控制底部播放控件的显示与隐藏
 const props = defineProps({
   mouseBootom: Boolean,
 });
 const move2bottom = ref(false);
-const enterThis = ref(true);
-// watch(props, v => {
-//   move2bottom.value = v.mouseBootom
-//   if(v.mouseBootom)
-//     enterThis.value = true
-// })
+const enterThis = ref(false);
+const lockFixed = ref(false)
+watch(props, v => {
+  move2bottom.value = v.mouseBootom
+  if(v.mouseBootom)
+    enterThis.value = true
+})
 
-// function mouseLeave(){
-//   enterThis.value = false
-// }
-// function mouseEnter(){
-//   enterThis.value = true
-// }
+function mouseLeave(){
+  enterThis.value = false
+}
+function mouseEnter(){
+  enterThis.value = true
+}
+function lockFooter(){
+  lockFixed.value = true
+}
+function unlockFooter(){
+  lockFixed.value = false
+}
 
+// 当前播放的歌曲或歌单信息
 const songInfo = ref(computed(() => store.state.curSongInfo));
 const songUrlInfo = ref(computed(() => store.state.curSongUrlInfo));
 const isPlay = ref(computed(() => store.state.isPlay));
 
 const audioRef = ref(null);
-// if (audioRef.value) {
-//   audioRef.value.src = songInfo.value.url
-// }
-// if (isPlay.value && audioRef.value) {
-//   if (!audioRef.value.src) {
-//     audioRef.value.src = songInfo.value.url
-//   }
-//   audioRef.value.play()
-// }
+if (audioRef.value) {
+  audioRef.value.src = songInfo.value.url
+}
+if (isPlay.value && audioRef.value) {
+  if (!audioRef.value.src) {
+    audioRef.value.src = songInfo.value.url
+  }
+  audioRef.value.play()
+}
 
 watch(songUrlInfo, (v) => {
   audioRef.value.src = v.url;
@@ -196,8 +214,8 @@ const currentDtText = computed(() => {
   if (currentDuration.value == 0) return "00:00";
   let s = Math.floor(currentDuration.value % 60);
   let m = Math.floor(currentDuration.value / 60);
-  let ss = s > 10 ? s : `0${s}`;
-  let mm = m > 10 ? m : `0${m}`;
+  let ss = s >= 10 ? s : `0${s}`;
+  let mm = m >= 10 ? m : `0${m}`;
   return `${mm}:${ss}`;
 });
 // 手动改变音乐播放的进度
@@ -229,6 +247,7 @@ function gotoSongPage() {
   router.push(`/song?id=${songInfo.value.id}`);
 }
 
+// 切歌
 const curList = ref(computed(() => store.state.curPlayList));
 const curIndex = ref(computed(() => store.state.curIndex));
 const loopStatus = ref("loop");
@@ -275,6 +294,16 @@ function musicVolumnChange() {
 }
 </script>
 
+<style>
+.el-drawer__header {
+  margin-bottom: 10px;
+}
+.el-drawer__body {
+  padding: 0;
+}
+
+</style>
+
 <style lang="scss" scoped>
 .footer-play-container {
   position: fixed;
@@ -282,7 +311,7 @@ function musicVolumnChange() {
   background-color: #3f3e3e;
   padding: 0.2rem 1rem;
   width: 100vw;
-  min-height: 6vh;
+  height: 8vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -328,6 +357,21 @@ function musicVolumnChange() {
       gap: 0.2rem;
       position: relative;
     }
+  }
+}
+.lock-fixed {
+  position: absolute;
+  bottom: 8vh;
+  right: 0;
+  width: 3rem;
+  height: 1.4rem;
+  background-color: #3f3e3e;
+  border-radius: 10px 10px 0 0;
+  text-align: center;
+  .lock-item {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
   }
 }
 </style>
