@@ -51,8 +51,10 @@ function imageLoad() {
   count.value += 1;
 }
 watch(count, (c) => {
-  if (c > props.col * props.row * 0.9) {
+  if (props.mList.length >= props.col*props.row && c > props.col * props.row * 0.9) {
     emit("imgLoad");
+  }else if(c == props.mList.length){
+    emit("imgLoad")
   }
 });
 const emit = defineEmits(["imgLoad"]);

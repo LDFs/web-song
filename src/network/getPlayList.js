@@ -25,7 +25,7 @@ function getRecomMusicListByCat(cat='全部', order='hot', limit=20, offset=0) {
 // 获取精品歌单
 function getHighqualityList(cat='全部'){
   return request({
-    url: '/top/playlist/highquality',
+    url: '/top/playlist',
     params: {
       cat
     }
@@ -114,6 +114,13 @@ function getSongRelatedLists(id){
   })
 }
 
+// 获取歌单的所有分类
+function getAllCats(){
+  return request({
+    url: '/playlist/catlist'
+  })
+}
+
 export { 
   getRecomMusicList, 
   getHomePageCoverList,
@@ -127,5 +134,6 @@ export {
   getListDetail,
   getRelatedList,
   getAllTopLists,
-  getSongRelatedLists
+  getSongRelatedLists,
+  getAllCats
 }

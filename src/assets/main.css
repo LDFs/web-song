@@ -23,10 +23,9 @@ a,
   a:hover {
     background-color: hsla(160, 100%, 37%, 0.2);
   }
-  
 }
 
-  /* @media (min-width: 1024px) {
+/* @media (min-width: 1024px) {
   body {
     display: flex;
     place-items: center;
@@ -39,17 +38,21 @@ a,
   }
 } */
 
-
 .text-line2 {
   overflow: hidden;
-    text-overflow: ellipsis;
-    line-clamp: 2;
-    -webkit-line-clamp: 2;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 
-    display: -moz-box;
-    -moz-box-orient: vertical;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+}
+.text-line1 {
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  overflow: hidden;
 }
 .link-text {
   cursor: pointer;
