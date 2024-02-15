@@ -20,7 +20,7 @@
       <SongRes v-if="type === '1'" :list="resLists" />
       <CoverList v-if="type === '10'" :mList="resLists" :type="'1'" :col="5"/>
       <div v-if="type === '100'" class="artists-res-container">
-        <div v-for="item in resLists" :key="item.id">
+        <div v-for="item in resLists" :key="item.id" @click="gotoArtist(item.id)">
           <img :src="item.picUrl" alt="">
           <div>{{ item.name }}</div>
         </div>
@@ -77,6 +77,10 @@ function goSearch(){
   const type = Object.keys(resMap)[activeIndex.value-1]
   router.push(`/searchResult?keywords=${keywords.value}&type=${type}`)
 }
+
+function gotoArtist(id){
+  router.push('/artistSongs?id='+id)
+}
 </script>
 <style>
 .el-menu--horizontal>.el-menu-item {
@@ -130,7 +134,7 @@ function goSearch(){
 }
 .res-container {
   width: 80%;
-  margin: 1rem auto;
+  margin: 1rem auto 0;
 }
 .artists-res-container {
   width: 100%;
@@ -139,6 +143,7 @@ function goSearch(){
   grid-template-columns: repeat(5, 1fr);
   img {
     width: 100%;
+    cursor: pointer;
   }
 }
 </style>

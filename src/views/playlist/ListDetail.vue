@@ -11,7 +11,7 @@
             <span class="creat-time">{{ creatTime }} 创建</span>
           </div>
           <div class="control-btns">
-            <button class="play">
+            <button class="play link-text" @click="playTheList">
               <el-icon><VideoPlay /></el-icon>播放
             </button>
             <button>
@@ -50,17 +50,17 @@
             <el-table-column class-name="link-text" label="歌手">
               <template #default="scope">
                 <span
-                  v-for="(item, index) in scope.row.artists"
+                  v-for="(item, index) in scope.row.ar"
                   :key="item.id"
                   @click="gotoArtist(item.id)"
                   class="link-text"
                 >
                   {{ item.name
-                  }}<span v-if="index < scope.row.artists.length - 1">/</span>
+                  }}<span v-if="index < scope.row.ar.length - 1">/</span>
                 </span>
               </template>
             </el-table-column>
-            <el-table-column prop="album.name" class-name="link-text" label="专辑" />
+            <el-table-column prop="al.name" class-name="link-text" label="专辑" />
           </el-table>
         </div>
       </div>
@@ -85,6 +85,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
 import { getListDetail, getRelatedList } from "@/network/getPlayList";
 import { getParamsByKey, formatDateByNumber, formatMS } from "@/utils/utils";
 import LRItem from "@/common/LRItem.vue";
@@ -128,8 +129,8 @@ function updateInfo() {
         dt: item.dt,
         dlong: d,
         name: item.name,
-        artists: item.ar,
-        album: item.al,
+        ar: item.ar,
+        al: item.al,
       });
     });
   });
@@ -159,6 +160,14 @@ function clickItem(row, column) {
 function gotoArtist(id) {
   // console.log(id)
   router.push("/artistSongs?id=" + id);
+}
+
+const store = useStore()
+function playTheList(){
+  store.commit('setCurList', musicLists.value)
+  store.commit('setIsPlay', true)
+  store.commit("setSongInfo", musicLists.value[0]);
+  store.dispatch("updateMusicUrl", musicLists.value[0].id);
 }
 </script>
 <style>

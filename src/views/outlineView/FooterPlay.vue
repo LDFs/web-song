@@ -1,7 +1,7 @@
 <template>
   <!-- v-show="lockFixed || true" -->
   <div
-    :style="{ bottom: lockFixed || enterThis ? 0 : '-8vh' }"
+    :style="{ bottom: lockFixed || enterThis ? 0 : '-40px' }"
     class="footer-play-container"
     @mouseleave="mouseLeave"
     @mouseenter="mouseEnter"
@@ -39,13 +39,6 @@
             :show-tooltip="false"
             @change="musicSliderHandleChange"
           />
-          <el-slider
-            v-if="songUrlInfo.freeTrialInfo && Object.keys(songUrlInfo.freeTrialInfo).length > 0"
-            v-model="freeTrail"
-            :max="songInfo.dt / 1000"
-            :show-tooltip="false"
-            style="position: absolute"
-          />
           <span v-if="songInfo.dt"> {{ currentDtText }}/{{ formatMS(songInfo.dt) }} </span>
           <span v-else>00:00/00:00</span>
         </div>
@@ -62,7 +55,9 @@
         :show-tooltip="false"
       />
       <IconVolumn class="control-icon" @click="exchangeVolumnSlider" />
-      <IconCircle class="control-icon" />
+      <IconCircle v-if="loopStatus == 0" class="control-icon" @click="changePlayStatus" />
+      <IconRandomPlay v-if="loopStatus == 1" class="control-icon" @click="changePlayStatus" />
+      <IconSinglePlay v-if="loopStatus == 2" class="control-icon" @click="changePlayStatus" />
       <IconMList class="control-icon" @click="showList" />
     </div>
     <audio autoplay ref="audioRef"></audio>
@@ -77,7 +72,7 @@
       style="
         width: 50%;
         margin: 0 auto;
-        margin-bottom: 8vh;
+        margin-bottom: 40px;
         background-color: #252424c4;
         color: #f4f4f4;
       "
@@ -119,6 +114,8 @@ import IconNext from '@/components/icons/IconNext.vue'
 import IconMList from '@/components/icons/IconMList.vue'
 import IconVolumn from '@/components/icons/IconVolumn.vue'
 import IconCircle from '@/components/icons/IconCircle.vue'
+import IconRandomPlay from '@/components/icons/IconRandomPlay.vue'
+import IconSinglePlay from '@/components/icons/IconSinglePlay.vue'
 import IconLockOff from '@/components/icons/IconLockOff.vue'
 import IconLockOn from '@/components/icons/IconLockOn.vue'
 
@@ -156,15 +153,6 @@ const songUrlInfo = ref(computed(() => store.state.curSongUrlInfo))
 const isPlay = ref(computed(() => store.state.isPlay))
 
 const audioRef = ref(null)
-if (audioRef.value) {
-  audioRef.value.src = songInfo.value.url
-}
-if (isPlay.value && audioRef.value) {
-  if (!audioRef.value.src) {
-    audioRef.value.src = songInfo.value.url
-  }
-  audioRef.value.play()
-}
 
 watch(songUrlInfo, (v) => {
   audioRef.value.src = v.url
@@ -178,7 +166,6 @@ watch(isPlay, (v) => {
 })
 // setAudioTagsInfo()
 const currentDuration = ref(0) // 当前播放的进度
-const freeTrail = ref([0, 0])
 function setAudioTagsInfo() {
   // if (songInfo.value) {
   //   audioRef.value.src = songInfo.value.url;
@@ -188,8 +175,15 @@ function setAudioTagsInfo() {
   audioRef.value.addEventListener('timeupdate', () => {
     currentDuration.value = audioRef.value.currentTime
     // 当非VIP用户播放VIP歌曲时，免费部分放完就会停止或切歌
-    if (audioRef.value.currentTime >= audioRef.value.duration && curList.value.length > 1) {
-      playChange(2)
+    if (audioRef.value.currentTime >= audioRef.value.duration) {
+      if(curList.value.length > 1 && loopStatus.value != 2)
+        playChange(2)
+      else {
+        audioRef.value.currentTime = 0
+        audioRef.value.duration = 0
+        currentDuration.value = 0
+        audioRef.value.play()
+      }
     }
   })
 }
@@ -233,23 +227,33 @@ function gotoSongPage() {
 // 切歌
 const curList = ref(computed(() => store.state.curPlayList))
 const curIndex = ref(computed(() => store.state.curIndex))
-const loopStatus = ref('loop')
+const loopStatus = ref(0)   // 0-循环，1-随机，2-单曲
+/**
+ * 切歌
+ * @param {int} m 标志，1-前一首，2-后一首
+ */
 function playChange(m) {
-  if (curList.value.length > 0 && loopStatus.value === 'loop') {
-    let nextI = 0
-    if (m === 1) {
-      nextI = curIndex.value === 0 ? curList.value.length - 1 : curIndex.value - 1
-    } else if (m === 2) {
-      nextI = (curIndex.value + 1) % curList.value.length
-    }
-    const song = curList.value[nextI]
+  let nextI = -1
+  if (curList.value.length > 0) {
+    // 循环或单曲，前后切换都是只改变一位
+    if(loopStatus.value === 0 || loopStatus.value === 2){
+      if (m === 1) {
+        nextI = curIndex.value === 0 ? curList.value.length - 1 : curIndex.value - 1
+      } else if (m === 2) {
+        nextI = (curIndex.value + 1) % curList.value.length
+      }
+    }else if(loopStatus.value === 1){
+      nextI = Math.floor(Math.random()*curList.value.length)
+    }    
+  }
+  if(nextI == -1) return ;
+  const song = curList.value[nextI]
     getSongUrl(song.id).then((res) => {
       store.commit('setSongInfo', song)
       store.commit('setSongUrlInfo', res.data.data[0])
       store.commit('setIsPlay', true)
       store.commit('setCurIndex', nextI)
     })
-  }
 }
 function playSongInList(index) {
   const song = curList.value[index]
@@ -259,6 +263,9 @@ function playSongInList(index) {
     store.commit('setIsPlay', true)
     store.commit('setCurIndex', index)
   })
+}
+function changePlayStatus(){
+  loopStatus.value = (loopStatus.value+1)%3
 }
 
 const direction = ref('btt')
@@ -294,7 +301,7 @@ function musicVolumnChange() {
   background-color: #3f3e3e;
   padding: 0.2rem 1rem;
   width: 100vw;
-  height: 8vh;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -312,18 +319,19 @@ function musicVolumnChange() {
     gap: 0.6rem;
     align-items: center;
     .album-pic {
-      width: 2vw;
+      width: 30px;
       height: fit-content;
       border-radius: 4px;
       cursor: pointer;
     }
     .not-pic {
       background-color: #888;
-      height: 2vw;
+      height: 30px;
     }
     .infos-right {
       flex-grow: 1;
       color: #eee;
+      height: 40px;
     }
     .song-artists {
       display: flex;
@@ -337,14 +345,17 @@ function musicVolumnChange() {
     }
     .progress-bar {
       display: flex;
+      align-items: center;
       gap: 0.2rem;
       position: relative;
+      height: 20px;
+      padding-bottom: 6px 
     }
   }
 }
 .lock-fixed {
   position: absolute;
-  bottom: 8vh;
+  bottom: 40px;
   right: 0;
   width: 3rem;
   height: 1.4rem;

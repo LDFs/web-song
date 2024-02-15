@@ -1,4 +1,5 @@
 import {createStore} from 'vuex'
+import { getSongUrl } from '@/network/getSongsInfo'
 
 const store = createStore({
   state: {
@@ -41,6 +42,13 @@ const store = createStore({
     },
     setCurPlayDt(state, dt){
       state.curPlayDt = dt
+    }
+  },
+  actions: {
+    updateMusicUrl(context, id){
+      getSongUrl(id).then(res => {
+        context.commit('setSongUrlInfo', res.data.data[0])
+      })
     }
   }
 })

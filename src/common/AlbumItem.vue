@@ -7,7 +7,7 @@
       <img @load='imgOnLoad' :src="item.picUrl" alt="" >
     </div>
     <div class="title text-line2">{{ item.name }}</div>
-    <div class="artist text-line2" :title="allArtists">
+    <div class="artist text-line2">
       <span v-for="(ar, index) in item.artists" :key="ar.id">{{ ar.name }}<span v-if="index < item.artists.length-1">/</span>
       </span>
     </div>
@@ -15,18 +15,18 @@
 </template>
 
 <script setup>
-import {computed} from 'vue'
+// import {ref, computed} from 'vue'
 import {useRouter} from 'vue-router'
 
 const props = defineProps({
   item: Object
 })
-const allArtists = computed(() => {
-  return props.item.artists.reduce((pre, cur) => {
-    if(pre === '') return cur.name
-    return pre + '/' + cur.name
-  }, '')
-})
+// const allArtists = computed(() => {
+  // return props.item.artists.reduce((pre, cur) => {
+    // if(pre === '') return cur.name
+    // return pre + '/' + cur.name
+  // }, '')
+// })
 
 const emit = defineEmits(['imgLoad'])
 function imgOnLoad(){
@@ -44,7 +44,7 @@ function gotoAlbum(){
 }
 .cover {
   position: relative;
-  width: 100%;
+  min-height: 130px;
   .msk {
     display: inline-block;
     width: 72%;

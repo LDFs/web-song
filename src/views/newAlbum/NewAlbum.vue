@@ -1,5 +1,6 @@
 <template>
-  <el-skeleton v-show="loading" class="out-container">
+  <div class="out-container">
+    <el-skeleton v-show="loading" class="out-container">
     <template #template>
       <div style="display: flex; flex-wrap: wrap;justify-content: space-between;">
         <div v-for="item in 30" :key="item" style="width: 18%;">
@@ -16,6 +17,8 @@
     <div class="title">全部新碟</div>
     <CoverList :mList="allAlbums" :col="5" :row="5" type="1" @imgLoad="showRealImg" />
   </div>
+  </div>
+  
 </template>
 
 <script setup>
@@ -42,8 +45,6 @@ function showRealImg(){
 
 <style lang="scss" scoped>
 .albums-container {
-  width: 54vw;
-  min-width: 620px;
   padding: 1.2rem 2rem 0 2rem;
   border-left: 1px solid #c1bfbf;
   border-right: 1px solid #c1bfbf;
