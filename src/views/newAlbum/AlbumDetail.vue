@@ -78,11 +78,12 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { getParamsByKey, formatDateByNumber, formatMS } from "@/utils/utils";
+import { getParamsByKey, formatDateByNumber, formatMS, getThemeColors } from "@/utils/utils";
 import { getAlbumDetail, getArtHotAlbum } from "@/network/getPlayList";
 import OutlineArchi from "@/common/OutlineArchi.vue";
 import LRItem from "@/common/LRItem.vue";
 
+const [, lightColor] = getThemeColors()
 const route = useRoute();
 const router = useRouter();
 const path = computed(() => route.fullPath);
@@ -178,16 +179,16 @@ function clickItem(row, column) {
 }
 .play-btn {
   border-radius: 4px;
-  background-color: #60b2fb;
+  background-color: v-bind(lightColor);
   border: none;
-  width: 6rem;
-  height: 2rem;
+  width: fit-content;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 2px;
   font-size: 1rem;
   color: #fff;
+  padding: 4px 10px;
 }
 .artist-name:hover {
   cursor: pointer;

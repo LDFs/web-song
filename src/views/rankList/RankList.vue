@@ -62,8 +62,9 @@ import { ref, computed, watch } from 'vue'
 import {useRouter} from 'vue-router'
 import { getAllTopLists, getListDetail } from '@/network/getPlayList'
 import LRItem from '@/common/LRItem.vue'
-import { formatDateByNumber, formatMS } from '@/utils/utils'
+import { formatDateByNumber, formatMS, getThemeColors } from '@/utils/utils'
 
+const [mainColor, lightColor] = getThemeColors()
 const router = useRouter()
 
 const topLists = ref([])
@@ -205,7 +206,8 @@ function clickItem(row, column){
         }
       }
       .play {
-        background-color: rgb(1, 121, 233);
+        background-color: v-bind(mainColor);
+        color: #fff;
       }
     }
   }
@@ -217,7 +219,7 @@ function clickItem(row, column){
 .list-title {
   margin-top: 2rem;
   padding-bottom: 6px;
-  border-bottom: 2px solid rgb(239, 87, 22);
+  border-bottom: 2px solid v-bind(lightColor);
   .tiny-font {
     font-size: 0.8rem;
     margin-left: 1rem;

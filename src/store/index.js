@@ -1,5 +1,6 @@
 import {createStore} from 'vuex'
 import { getSongUrl } from '@/network/getSongsInfo'
+import themeModule from './themeModule'
 
 const store = createStore({
   state: {
@@ -50,6 +51,9 @@ const store = createStore({
         context.commit('setSongUrlInfo', res.data.data[0])
       })
     }
+  },
+  modules: {
+    themeModule
   }
 })
 

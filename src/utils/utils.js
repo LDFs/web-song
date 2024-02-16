@@ -1,3 +1,6 @@
+import { useStore } from 'vuex';
+import { computed } from 'vue';
+
 function getParamsByKey(path, key){
   const paramsStr = path.split('?')[1]
   if(!paramsStr) return ''
@@ -40,7 +43,14 @@ function formatMS(ms){
   return d
 }
 
-// 将对象数组的特定属性
+// 返回主题颜色
+function getThemeColors(){
+  const store = useStore()
+  const mainColor = computed(() => store.state.themeModule.mainColor)
+  const lightColor = computed(() => store.state.themeModule.lightColor)
+  const deepColor = computed(() => store.state.themeModule.deepColor)
+  return [mainColor, lightColor, deepColor]
+}
 
 
-export {getParamsByKey, formatDateByNumber, formatMS}
+export {getParamsByKey, formatDateByNumber, formatMS, getThemeColors}

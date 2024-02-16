@@ -1,7 +1,7 @@
 <template>
   <div class="little-nav-title">
     <div class="nav-left">
-      <el-icon color="#e82222"><Orange /></el-icon>
+      <div class="circle-dot"></div>
       <div class="big-title">{{ title || '歌单' }}</div>
       <slot name="breadcrumb"></slot>
     </div>
@@ -11,6 +11,10 @@
 </template>
 
 <script setup>
+import {computed} from 'vue'
+import { useStore } from 'vuex';
+const store = useStore()
+const mainColor = computed(() => store.state.themeModule.mainColor)
 defineProps({
   title: String
 })
@@ -24,8 +28,7 @@ defineProps({
   justify-content: space-between;
   align-items: center;
   padding: 0 10px 4px;
-  border-bottom: 2px solid #e82222;
-  
+  border-bottom: 2px solid v-bind(mainColor);
 }
 .nav-left {
   display: flex;
@@ -34,5 +37,11 @@ defineProps({
 }
 .big-title {
   font-size: 1.2rem;
+}
+.circle-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 5px solid v-bind(mainColor);
 }
 </style>

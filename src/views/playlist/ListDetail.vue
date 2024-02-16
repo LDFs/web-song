@@ -87,8 +87,10 @@ import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { getListDetail, getRelatedList } from "@/network/getPlayList";
-import { getParamsByKey, formatDateByNumber, formatMS } from "@/utils/utils";
+import { getParamsByKey, formatDateByNumber, formatMS, getThemeColors } from "@/utils/utils";
 import LRItem from "@/common/LRItem.vue";
+
+const [mainColor, lightColor] = getThemeColors()
 
 const route = useRoute();
 const router = useRouter();
@@ -232,7 +234,8 @@ function playTheList(){
         }
       }
       .play {
-        background-color: rgb(1, 121, 233);
+        background-color: v-bind(lightColor);
+        color: #fff;
       }
     }
   }
@@ -257,7 +260,7 @@ function playTheList(){
 .list-title {
   margin-top: 2rem;
   padding-bottom: 6px;
-  border-bottom: 2px solid rgb(239, 87, 22);
+  border-bottom: 2px solid v-bind(mainColor);
   .tiny-font {
     font-size: 0.8rem;
     margin-left: 1rem;

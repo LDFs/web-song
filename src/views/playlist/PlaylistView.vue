@@ -46,7 +46,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ref, watch, computed } from 'vue'
 
 import { getHighqualityList, getAllCats } from '@/network/getPlayList'
-import { getParamsByKey } from '@/utils/utils'
+import { getParamsByKey, getThemeColors } from '@/utils/utils'
 import CoverList from '@/components/CoverList.vue'
 
 const route = useRoute()
@@ -108,6 +108,8 @@ const loading = ref(true)
 function showRealImg() {
   loading.value = false
 }
+
+const [mainColor] = getThemeColors()
 </script>
 
 <style lang="scss" scoped>
@@ -122,7 +124,9 @@ function showRealImg() {
     padding-bottom: 2px;
     margin-top: 0.4rem;
     margin-bottom: 0.8rem;
-    border-bottom: 2px solid #c41313;
+    border-bottom: 2px solid v-bind(mainColor);
+    display: flex;
+    align-items: center;
   }
   .cat-title {
     font-size: 1.4rem;
@@ -131,12 +135,12 @@ function showRealImg() {
 }
 .choice-btn {
     margin-left: 10px;
-    padding: 6px;
     border: 1px solid #d3d1d1;
     border-radius: 4px;
     background-image: linear-gradient(to top, #f0f0f0, #fff);
     cursor: pointer;
     width: fit-content;
+    height: fit-content;
   }
 .little-title{
   padding: .2rem 1rem; 

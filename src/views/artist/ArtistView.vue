@@ -54,6 +54,9 @@
 import { ref, watch } from 'vue'
 import {useRouter} from 'vue-router'
 import { getTopArtists, getArtistsByCats } from '@/network/getArtists'
+import {getThemeColors} from '@/utils/utils'
+
+const [mainColor, lightColor] = getThemeColors()
 const cats = [
   {
     name: '华语',
@@ -139,7 +142,7 @@ function gotoSongs(id){
       font-size: 0.8rem;
     }
     .activedMenuItem {
-      color: #b71402;
+      color: v-bind(lightColor);
     }
     .menu-item:hover {
       cursor: pointer;
@@ -157,7 +160,7 @@ function gotoSongs(id){
   .title-2rem {
     font-size: 1.6rem;
     padding-bottom: 0.2rem;
-    border-bottom: 2px solid #b71402;
+    border-bottom: 2px solid v-bind(mainColor);
   }
   .artists-cover-part, .artists-names-part {
     display: flex;

@@ -16,17 +16,34 @@
       <input type="text" name="" value="" placeholder="音乐/歌单/歌手/专辑" @keyup.enter="gotoSearch"
         v-model="searchData" />
     </div>
+    <div style="position: relative;">
+      <div class="link-text" @click="setThemeColor">设置主题颜色</div>
+      <ThemeColor v-if="showThemeColor" /> 
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useStore } from 'vuex';
 
 import { activeMenu, activeSubMenu } from '@/store/observable'
+import ThemeColor from './ThemeColor.vue';
+import {getThemeColors} from '@/utils/utils'
 
 const router = useRouter()
 const route = useRoute()
+const store = useStore()
+const [mainColor, , deepColor] = getThemeColors()
+
+const mc = localStorage.getItem('mainColor')
+console.log("mc:", mc)
+if(mc){
+  store.commit('setMainColor', mc)
+  let [l, d] = [localStorage.getItem('lightColor'), localStorage.getItem('deepColor')]
+  store.commit('setDerivateColor', {l, d})
+}
 
 /**
  * subMenu 指'发现音乐'目录项对应的子目录，里面每一项是一个对象：{name: 'xxx', linkName: 'xxxx'}
@@ -54,12 +71,17 @@ function gotoSearch(){
   router.push(`/searchResult?keywords=${searchData.value}&type=1`)
 }
 
+const showThemeColor = ref(false)
+function setThemeColor(){
+  showThemeColor.value = !showThemeColor.value
+}
+
 </script>
 
 <style lang="scss" scoped>
 #header-container {
   width: 100vw;
-  background-color: rgb(242, 37, 37);
+  background-color: v-bind(mainColor);
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -100,6 +122,6 @@ function gotoSearch(){
 }
 .activeSubMenuStyle {
   border-radius: 18px;
-  background-color: #900707;
+  background-color: v-bind(deepColor);
 }
 </style>

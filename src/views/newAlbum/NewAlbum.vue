@@ -25,6 +25,7 @@
 import {ref} from 'vue'
 import {getNewAlbum, getAllAlbum} from '@/network/getPlayList'
 import CoverList from '@/components/CoverList.vue';
+import {getThemeColors} from '@/utils/utils'
 
 const hotAlbums = ref([])
 getNewAlbum().then(res => {
@@ -41,6 +42,8 @@ function showRealImg(){
   loading.value = false
 }
 
+const [mainColor] = getThemeColors()
+
 </script>
 
 <style lang="scss" scoped>
@@ -54,6 +57,6 @@ function showRealImg(){
   padding-bottom: 2px;
   margin-top: 0.4rem;
   margin-bottom: 0.8rem;
-  border-bottom: 2px solid #b50a0a;
+  border-bottom: 2px solid v-bind(mainColor);
 }
 </style>

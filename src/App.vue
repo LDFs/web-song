@@ -44,7 +44,9 @@ const listenMouse = function(e){
     <component :is="Component" :key="$route.name" v-if="!$route.meta.keepAlive"/>
   </router-view>
   <footer>
-    前端项目练习 by LDF
+    前端项目 by LDF; 
+    框架技术：Vue3、vue-router、vuex、axios; 
+    接口来源<a href="https://binaryify.github.io/NeteaseCloudMusicApi/#/">@Binaryify</a>
   </footer>
   <FooterPlay :mouseBootom="mouseBootom"/>
   </div>

@@ -54,7 +54,7 @@
             <div
               v-for="(item, i) in lyrics"
               :key="i"
-              :style="{ color: lyricIndex == i ? 'red' : 'black' }"
+              :style="{ color: lyricIndex == i ? deepColor : 'black' }"
             >
               {{ item.c }}
             </div>
@@ -126,11 +126,13 @@ import {
   getSongUrl,
 } from "@/network/getSongsInfo";
 import { getSongRelatedLists } from "@/network/getPlayList";
-import { getParamsByKey } from "@/utils/utils";
+import { getParamsByKey, getThemeColors } from "@/utils/utils";
 import OutlineArchi from "@/common/OutlineArchi.vue";
 import LRItem from "@/common/LRItem.vue";
 
 import ThumbUp from "@/components/icons/IconThumbUp.vue";
+
+const [, lightColor, deepColor] = getThemeColors()
 
 const store = useStore();
 const route = useRoute();
@@ -368,7 +370,7 @@ function gotoList(id) {
         display: flex;
         align-items: center;
         gap: 4px;
-        background-color: rgb(0, 85, 188);
+        background-color: v-bind(lightColor);
         color: #fff;
         border: none;
         border-radius: 3px;
