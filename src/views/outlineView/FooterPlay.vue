@@ -60,11 +60,20 @@
       <IconSinglePlay v-if="loopStatus == 2" class="control-icon" @click="changePlayStatus" />
       <IconMList class="control-icon" @click="showList" />
     </div>
-    <audio autoplay ref="audioRef"></audio>
+    <audio autoplay ref="audioRef" crossorigin="anonymous"></audio>
     <div class="lock-fixed">
       <IconLockOff v-if="!lockFixed" class="lock-item" @click="lockFooter" />
       <IconLockOn v-if="lockFixed" class="lock-item" @click="unlockFooter" />
     </div>
+    <div class="forPortal">
+      <div class="canvas-container-left">
+        <canvas ref="canvasElementLeft" class="canvas-item"></canvas>
+      </div>
+      <div class="canvas-container-right">
+        <canvas ref="canvasElementRight" class="canvas-item"></canvas>
+      </div>
+    </div>
+    
     <el-drawer
       v-model="drawer"
       title="播放列表"
@@ -73,25 +82,26 @@
         width: 50%;
         margin: 0 auto;
         margin-bottom: 40px;
-        background-color: #252424c4;
-        color: #f4f4f4;
+        color: #f4f4f4; 
       "
+      :style="{backgroundColor: lightColor}"
       modal-class="over-mask"
     >
       <div style="padding: 0.2rem 1rem">
         <div
           v-for="(item, index) in curList"
           :key="item.id"
-          style="display: flex; cursor: pointer; justify-content: space-around;"
-          @click="playSongInList(index)"
+          style="display: flex; justify-content: space-around;"
         >
-          <div style="width: 40%">{{ item.name }}</div>
+          <div style="width: 40%; cursor: pointer;" @click="playSongInList(index)">{{ item.name }}</div>
           <div class="text-line1" style="width: 30%;">
             <span v-for="(ar, i) in item.ar" :key="ar.id"
               >{{ ar.name }}<span v-if="i < item.ar.length - 1">/</span></span
             >
           </div>
           <div>{{ formatMS(item.dt) }}</div>
+          <div><el-icon><Top /></el-icon></div>
+          <div><el-icon><Bottom /></el-icon></div>
         </div>
         <div v-if="curList.length == 0">没有播放的歌曲</div>
       </div>
@@ -100,12 +110,12 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
 import { getSongUrl } from '@/network/getSongsInfo'
-import { formatMS } from '@/utils/utils'
+import { formatMS, getThemeColors } from '@/utils/utils'
 
 import IconPause from '@/components/icons/IconPause.vue'
 import IconPlay from '@/components/icons/IconPlay.vue'
@@ -282,6 +292,87 @@ function exchangeVolumnSlider() {
 function musicVolumnChange() {
   audioRef.value.volume = volumnValue.value / 100
 }
+
+const canvasElementLeft = ref(null);
+const canvasElementRight = ref(null);
+onMounted(() => {
+  // 创建音频处理图
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  // 创建一个音频处理对象,用于获取音频时间和频率数据。
+  const analyser = audioCtx.createAnalyser();
+  // 将 audio 元素与音频处理图连接起来
+  const source = audioCtx.createMediaElementSource(audioRef.value);
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+  analyser.fftSize = 512;   // 设置频率数据的精度
+
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  // const dataArray = Uint8Array.from(new Uint8Array(bufferLength), (v,k) => k);;
+  dataArray.sort(() => Math.random() - 0.5)
+
+  const canvasCtx = canvasElementLeft.value.getContext('2d');
+  const canvasCtxCopy = canvasElementRight.value.getContext('2d');
+
+  const barHeight = (canvasElementLeft.value.height / bufferLength) * 6
+  console.log('--', canvasElementLeft.value.height, bufferLength, barHeight)
+  let barWidth;
+
+  function draw() {
+    requestAnimationFrame(draw);
+    analyser.getByteTimeDomainData(dataArray);
+    // analyser.getByteTimeDomainData(dataArray)
+    canvasCtx.fillStyle = 'transparent';
+    canvasCtx.clearRect(0, 0, canvasElementLeft.value.width, canvasElementLeft.value.height);
+
+    const len = bufferLength / 2
+    for (let i = 0; i < len; i++){
+      barWidth = dataArray[i]
+      const r = barWidth + 25 * (i/len)
+      const g = 250 *(i/len)
+      const b = 50
+      const y1 = i * barHeight + canvasElementLeft.value.height / 2
+      const y2 = canvasElementLeft.value.height / 2 - (i+1) * barHeight
+      // const x = canvasElementLeft.value.width - barWidth
+
+      canvasCtx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')'
+      canvasCtx.fillRect(0, y1, barWidth - 1, barHeight)
+      canvasCtx.fillRect(0, y2, barWidth - 1, barHeight)
+    }
+    
+    /*
+    canvasCtx.fillRect(0, 0, canvasElementLeft.value.width, canvasElementLeft.value.height);
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = deepColor.value;
+    canvasCtx.globalAlpha = 0.5; // 设置绘图的透明度, 并且同时会显示多条线
+    const sliceWidth = canvasElementLeft.value.width * 1.0 / bufferLength;
+    let y = 0;   // 因为是竖向的
+    canvasCtx.clearRect(0, 0, canvasElementLeft.value.width, canvasElementLeft.value.height);
+    canvasCtx.beginPath();
+    for(let i = 0; i < bufferLength; i++) {
+      const v = dataArray[i] / 128.0;
+      const x = v * canvasElementLeft.value.width / 2;
+      if(i === 0) {
+        canvasCtx.moveTo(x, y);
+      } else {
+        canvasCtx.lineTo(x, y);
+      }
+      y += sliceWidth;
+    }
+    canvasCtx.lineTo(canvasElementLeft.value.width/2, canvasElementLeft.value.height+10);
+    canvasCtx.stroke();
+    */
+
+     // 获取原始 canvas 的图像数据
+    const imageData = canvasCtx.getImageData(0, 0, canvasElementLeft.value.width, canvasElementLeft.value.height);
+    // 将图像数据绘制到镜像 canvas 上
+    canvasCtxCopy.putImageData(imageData, 0, 0);
+  }
+  
+  draw();
+});
+
+const [ , lightColor, deepColor] = getThemeColors()
 </script>
 
 <style>
@@ -292,13 +383,19 @@ function musicVolumnChange() {
 .el-drawer__body {
   padding: 0;
 }
+.el-slider__bar {
+  background-color: v-bind(lightColor)
+}
+.el-slider__button {
+  border-color: v-bind(lightColor);
+}
 </style>
 
 <style lang="scss" scoped>
 .footer-play-container {
   position: fixed;
   bottom: 0;
-  background-color: #3f3e3e;
+  background-color: v-bind(deepColor);
   padding: 0.2rem 1rem;
   width: 100vw;
   height: 40px;
@@ -307,6 +404,7 @@ function musicVolumnChange() {
   align-items: center;
   gap: 0.4rem;
   z-index: 10;
+  box-shadow: 0px 0 7px 3px #b1b0b0;
   .control-icon {
     width: 1.4rem;
     height: 1.4rem;
@@ -366,6 +464,31 @@ function musicVolumnChange() {
     width: 1rem;
     height: 1rem;
     cursor: pointer;
+  }
+}
+.canvas-container-left {
+  position: fixed;
+  top: 0;
+  left: 0;
+  // width: 100%;
+  height: 100%;
+  
+}
+.canvas-item {
+  position: relative;
+  top: 0;
+  bottom: 0;
+  width: 16vw;
+  height: 100vh;
+}
+.canvas-container-right {
+  position: fixed;
+  top: 0;
+  right: 0;
+  // width: 100%;
+  height: 100%;
+  .canvas-item {
+    transform: scaleX(-1);
   }
 }
 </style>

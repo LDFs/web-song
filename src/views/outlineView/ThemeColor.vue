@@ -1,5 +1,5 @@
 <template>
-  <div class="theme-color-container">
+  <div class="theme-color-container" >
     <div class="inline-block">
       <div class="inline-block">选取主题颜色</div>
       <el-color-picker v-model="color1" />

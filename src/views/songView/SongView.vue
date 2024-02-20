@@ -54,7 +54,8 @@
             <div
               v-for="(item, i) in lyrics"
               :key="i"
-              :style="{ color: lyricIndex == i ? deepColor : 'black' }"
+              style="width: 100%; text-align: center;"
+              :class="{activeLyric: lyricIndex == i}"
             >
               {{ item.c }}
             </div>
@@ -132,7 +133,7 @@ import LRItem from "@/common/LRItem.vue";
 
 import ThumbUp from "@/components/icons/IconThumbUp.vue";
 
-const [, lightColor, deepColor] = getThemeColors()
+const [, lightColor] = getThemeColors()
 
 const store = useStore();
 const route = useRoute();
@@ -408,6 +409,10 @@ function gotoList(id) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  .activeLyric {
+    background-color: #e3e3e32a;
+    color: v-bind(lightColor);
+  }
 }
 .comments-container {
   margin-top: 1rem;

@@ -18,7 +18,7 @@
     </div>
     <div style="position: relative;">
       <div class="link-text" @click="setThemeColor">设置主题颜色</div>
-      <ThemeColor v-if="showThemeColor" /> 
+      <ThemeColor v-if="showThemeColor" @blur="hiddenTheme" tabindex="-1" /> 
     </div>
   </div>
 </template>
@@ -38,7 +38,6 @@ const store = useStore()
 const [mainColor, , deepColor] = getThemeColors()
 
 const mc = localStorage.getItem('mainColor')
-console.log("mc:", mc)
 if(mc){
   store.commit('setMainColor', mc)
   let [l, d] = [localStorage.getItem('lightColor'), localStorage.getItem('deepColor')]
@@ -74,6 +73,9 @@ function gotoSearch(){
 const showThemeColor = ref(false)
 function setThemeColor(){
   showThemeColor.value = !showThemeColor.value
+}
+function hiddenTheme(){
+  showThemeColor.value = false
 }
 
 </script>
