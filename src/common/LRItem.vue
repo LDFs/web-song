@@ -24,6 +24,7 @@ const props = defineProps({
 })
 const router = useRouter()
 function jumpTo(){
+  if(!props.jumpTo) return
   router.push(`${props.jumpUrl}?id=${props.item.id}`)
 }
 </script>

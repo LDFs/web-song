@@ -1,0 +1,209 @@
+<template>
+  <div
+    v-if="musicInfo && Object.keys(musicInfo).length > 0"
+    class="cover"
+    :style="{ backgroundImage: `url(${musicInfo.al.picUrl})` }"
+  ></div>
+  <div class="visual-container">
+    <div class="right-cover" >
+      <canvas ref="canvasElement" class="canvas-item" width="400" height="400"></canvas>
+      <button class="al-pic" :class="{pauseRotate: !isPlay}" :style="{backgroundImage: `url(${musicInfo.al.picUrl})`}" >
+      </button>
+      <div class="control-div" @click="changePlay">
+        <IconPause v-if="!isPlay" class="control-icon" />
+        <IconPlay v-else class="control-icon" />
+      </div>
+    </div>
+    <div>
+      <div style="font-size: .8rem; color: #6d6d6d;display:flex;flex-direction: column; gap: 10px;align-items: center;">
+        <div style="font-weight: 700;font-size: 1.6rem;">{{ musicInfo.name }}</div>
+        <div>专辑：{{ musicInfo.al.name }}</div>
+        <div>歌手：
+          <span v-for="(item, i) in musicInfo.ar" :key="item.id">{{ item.name }}<span
+            v-if="i < musicInfo.ar.length-1"
+          >/</span></span>
+        </div>
+      </div>
+      <LyricScroll :containerStyle="{minWidth: '400px',width: '30vw',fontSize: '1rem' }" />
+    </div>
+    
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted, watch } from 'vue';
+import { useStore } from 'vuex';
+import LyricScroll from "./LyricScroll.vue";
+import IconPause from '@/components/icons/IconPause2.vue'
+import IconPlay from '@/components/icons/IconPlay2.vue'
+
+const store = useStore()
+const audio = computed(() => store.state.audio)
+const musicInfo = computed(() => store.state.curSongInfo)
+const isPlay = computed(() => store.state.isPlay)
+
+const canvasElement = ref(null)
+
+onMounted(() => {
+  // 创建音频处理图
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  // 创建一个音频处理对象,用于获取音频时间和频率数据。
+  const analyser = audioCtx.createAnalyser();
+  // 将 audio 元素与音频处理图连接起来
+  const source = audioCtx.createMediaElementSource(audio.value);
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+  analyser.fftSize = 512;   // 设置频率数据的精度
+
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  // console.log(bufferLength)
+  // console.log(dataArray)
+
+  const canvasCtx = canvasElement.value.getContext('2d');
+  // canvasCtx.width = 400;
+  // canvasCtx.height = 400;
+
+  const randomData = Uint8Array.from(new Uint8Array(120), (v,k) => k);
+  randomData.sort(() => Math.random() - 0.5)
+
+  watch(canvasElement, () => {
+    // 没有用
+    console.log('draw...')
+  })
+  draw()
+  function draw() {
+    requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArray);
+    const frontData = dataArray.slice(0, 120)
+    
+    const bData = []
+    randomData.forEach(value => {
+      bData.push(frontData[value])
+    })
+    const angle = Math.PI * 2 / bData.length;
+    if(!canvasElement.value){
+      return 
+    }
+    // 清除上次绘制记录
+    canvasCtx.clearRect(0, 0, canvasElement.value.width, canvasElement.value.height)
+    // 背景填充颜色
+    canvasCtx.fillStyle = '#fff'
+    // 通过将当前状态推入堆栈来保存画布的整个状态
+    canvasCtx.save()
+    // 向当前矩阵添加平移变换
+    canvasCtx.translate(canvasElement.value.width/2, canvasElement.value.height/2)
+    
+    bData.forEach((value, index) => {
+      canvasCtx.save()
+      // 向变换矩阵添加一个旋转
+      canvasCtx.rotate(angle * index)
+      // 创建新路径
+      canvasCtx.beginPath()
+      const h = value / 256 * 60
+      // 绘制圆角矩形
+      canvasCtx.roundRect(-4, 140, 4, (h<4)?4: h)
+      // 填充矩形
+      canvasCtx.fill()
+      // 通过弹出绘图状态堆栈中的顶部条目来恢复最近保存的画布状态
+      canvasCtx.restore()
+    })
+    canvasCtx.restore()
+  }
+
+  
+})
+
+function changePlay(){
+  store.commit('setIsPlay', !isPlay.value)
+}
+
+</script>
+
+<style lang="scss" scoped>
+.cover {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover; // 让背景图片填充整个背景
+  opacity: 0.6;
+  z-index: -2;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  filter: blur(18px); // 虚化当前元素
+}
+.visual-container {
+  width: 100vw;
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.right-cover {
+  position: relative;
+  min-width: 300px;
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .canvas-item {
+    // width: 300px;
+    // height: 300px;
+    border-radius: 50%;
+    position: absolute;
+    // top: 0;
+  }
+  .al-pic {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    background-size: cover;
+    border-radius: 50%;
+    border: none;
+    outline: none;
+    animation: music-btn-anim 20s infinite linear;
+    cursor: pointer;
+    
+  }
+  .control-div {
+      opacity: 0;
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .control-icon {
+      width: 50%;
+      height: 50%;
+      cursor: pointer;      
+    }
+    .control-div:hover {
+      opacity: 1;
+    }
+  .pauseRotate {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes music-btn-anim {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+.left-lyric {
+  position: relative;
+  width: 40vw;
+  height: 90vh;
+  background-color: #f8f174;
+}
+</style>

@@ -60,20 +60,11 @@
       <IconSinglePlay v-if="loopStatus == 2" class="control-icon" @click="changePlayStatus" />
       <IconMList class="control-icon" @click="showList" />
     </div>
-    <audio autoplay ref="audioRef" crossorigin="anonymous"></audio>
+    <audio ref="audioRef" crossorigin="anonymous"></audio>
     <div class="lock-fixed">
       <IconLockOff v-if="!lockFixed" class="lock-item" @click="lockFooter" />
       <IconLockOn v-if="lockFixed" class="lock-item" @click="unlockFooter" />
     </div>
-    <div class="forPortal">
-      <div class="canvas-container-left">
-        <canvas ref="canvasElementLeft" class="canvas-item"></canvas>
-      </div>
-      <div class="canvas-container-right">
-        <canvas ref="canvasElementRight" class="canvas-item"></canvas>
-      </div>
-    </div>
-    
     <el-drawer
       v-model="drawer"
       title="播放列表"
@@ -172,8 +163,21 @@ watch(songUrlInfo, (v) => {
 watch(isPlay, (v) => {
   if (v) {
     audioRef.value.play()
+  }else {
+    audioRef.value.pause()
   }
 })
+
+onMounted(() => {
+  const info = localStorage.getItem('songInfo')
+  const url = localStorage.getItem('songUrlInfo')
+  if(info) {
+    store.commit('setSongInfo', JSON.parse(info))
+    store.commit('setSongUrlInfo', JSON.parse(url))
+    store.commit('setCurIndex', localStorage.getItem('curIndex') || 0)
+  }
+})
+
 // setAudioTagsInfo()
 const currentDuration = ref(0) // 当前播放的进度
 function setAudioTagsInfo() {
@@ -181,6 +185,7 @@ function setAudioTagsInfo() {
   //   audioRef.value.src = songInfo.value.url;
   // }
   musicVolumnChange() // 设置音量
+  store.commit('setAudio', audioRef.value)
   // 播放音乐时，audio的信息自动变化，把变化的信息更新到this中
   audioRef.value.addEventListener('timeupdate', () => {
     currentDuration.value = audioRef.value.currentTime
@@ -190,7 +195,7 @@ function setAudioTagsInfo() {
         playChange(2)
       else {
         audioRef.value.currentTime = 0
-        audioRef.value.duration = 0
+        // audioRef.value.duration = 0
         currentDuration.value = 0
         audioRef.value.play()
       }
@@ -263,6 +268,10 @@ function playChange(m) {
       store.commit('setSongUrlInfo', res.data.data[0])
       store.commit('setIsPlay', true)
       store.commit('setCurIndex', nextI)
+
+      localStorage.setItem('songInfo', JSON.stringify(song))
+      localStorage.setItem('songUrlInfo', JSON.stringify(res.data.data[0]))
+      localStorage.setItem('curIndex', nextI)
     })
 }
 function playSongInList(index) {
@@ -272,6 +281,10 @@ function playSongInList(index) {
     store.commit('setSongUrlInfo', res.data.data[0])
     store.commit('setIsPlay', true)
     store.commit('setCurIndex', index)
+
+    localStorage.setItem('songInfo', JSON.stringify(song))
+    localStorage.setItem('songUrlInfo', JSON.stringify(res.data.data[0]))
+    localStorage.setItem('curIndex', index)
   })
 }
 function changePlayStatus(){
@@ -292,85 +305,6 @@ function exchangeVolumnSlider() {
 function musicVolumnChange() {
   audioRef.value.volume = volumnValue.value / 100
 }
-
-const canvasElementLeft = ref(null);
-const canvasElementRight = ref(null);
-onMounted(() => {
-  // 创建音频处理图
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  // 创建一个音频处理对象,用于获取音频时间和频率数据。
-  const analyser = audioCtx.createAnalyser();
-  // 将 audio 元素与音频处理图连接起来
-  const source = audioCtx.createMediaElementSource(audioRef.value);
-  source.connect(analyser);
-  analyser.connect(audioCtx.destination);
-  analyser.fftSize = 512;   // 设置频率数据的精度
-
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
-  // const dataArray = Uint8Array.from(new Uint8Array(bufferLength), (v,k) => k);;
-  dataArray.sort(() => Math.random() - 0.5)
-
-  const canvasCtx = canvasElementLeft.value.getContext('2d');
-  const canvasCtxCopy = canvasElementRight.value.getContext('2d');
-
-  const barHeight = (canvasElementLeft.value.height / bufferLength) * 6
-  console.log('--', canvasElementLeft.value.height, bufferLength, barHeight)
-  let barWidth;
-
-  function draw() {
-    requestAnimationFrame(draw);
-    analyser.getByteTimeDomainData(dataArray);
-    // analyser.getByteTimeDomainData(dataArray)
-    canvasCtx.fillStyle = 'transparent';
-    canvasCtx.clearRect(0, 0, canvasElementLeft.value.width, canvasElementLeft.value.height);
-
-    const len = bufferLength / 2
-    for (let i = 0; i < len; i++){
-      barWidth = dataArray[i]
-      const r = barWidth + 25 * (i/len)
-      const g = 250 *(i/len)
-      const b = 50
-      const y1 = i * barHeight + canvasElementLeft.value.height / 2
-      const y2 = canvasElementLeft.value.height / 2 - (i+1) * barHeight
-      // const x = canvasElementLeft.value.width - barWidth
-
-      canvasCtx.fillStyle = 'rgb(' + r + ',' + g + ',' + b + ')'
-      canvasCtx.fillRect(0, y1, barWidth - 1, barHeight)
-      canvasCtx.fillRect(0, y2, barWidth - 1, barHeight)
-    }
-    
-    /*
-    canvasCtx.fillRect(0, 0, canvasElementLeft.value.width, canvasElementLeft.value.height);
-    canvasCtx.lineWidth = 2;
-    canvasCtx.strokeStyle = deepColor.value;
-    canvasCtx.globalAlpha = 0.5; // 设置绘图的透明度, 并且同时会显示多条线
-    const sliceWidth = canvasElementLeft.value.width * 1.0 / bufferLength;
-    let y = 0;   // 因为是竖向的
-    canvasCtx.clearRect(0, 0, canvasElementLeft.value.width, canvasElementLeft.value.height);
-    canvasCtx.beginPath();
-    for(let i = 0; i < bufferLength; i++) {
-      const v = dataArray[i] / 128.0;
-      const x = v * canvasElementLeft.value.width / 2;
-      if(i === 0) {
-        canvasCtx.moveTo(x, y);
-      } else {
-        canvasCtx.lineTo(x, y);
-      }
-      y += sliceWidth;
-    }
-    canvasCtx.lineTo(canvasElementLeft.value.width/2, canvasElementLeft.value.height+10);
-    canvasCtx.stroke();
-    */
-
-     // 获取原始 canvas 的图像数据
-    const imageData = canvasCtx.getImageData(0, 0, canvasElementLeft.value.width, canvasElementLeft.value.height);
-    // 将图像数据绘制到镜像 canvas 上
-    canvasCtxCopy.putImageData(imageData, 0, 0);
-  }
-  
-  draw();
-});
 
 const [ , lightColor, deepColor] = getThemeColors()
 </script>

@@ -9,7 +9,8 @@ const store = createStore({
     curPlayList: [],
     curIndex: -1,   // 当前播放歌曲在列表中的下标
     isPlay: false,
-    curPlayDt: 0
+    curPlayDt: 0,
+    audio: null
   },
   mutations: {
     setSongInfo(state, info){
@@ -43,6 +44,9 @@ const store = createStore({
     },
     setCurPlayDt(state, dt){
       state.curPlayDt = dt
+    },
+    setAudio(state, audio){
+      state.audio = audio
     }
   },
   actions: {

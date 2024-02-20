@@ -99,6 +99,14 @@ const router = createRouter({
         keepAlive: false 
       },
       component: () => import('@/views/search/SearchView.vue')
+    },
+    {
+      path: '/visualSong',
+      name: 'visualSong',
+      meta: {
+        keepAlive: false
+      },
+      component: () => import('@/views/songView/VisualPlay.vue')
     }
   ]
 })

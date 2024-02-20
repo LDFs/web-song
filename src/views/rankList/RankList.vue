@@ -3,7 +3,7 @@
     <div class="rank-left">
       <div class="title">音乐榜单</div>
       <div class="items">
-        <LRItem v-for="(item, index) in topLists" @click="changeIndex(index)" :key="item.name"
+        <LRItem v-for="(item, index) in topLists" @click="changeIndex(index)" :jumpUrl="''" :key="item.name"
           :class="{activatedStyle: index === selected}"
          :item="item" :img-width="'3rem'" />
       </div>
