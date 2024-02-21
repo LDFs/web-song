@@ -50,7 +50,7 @@
             </div>
           </div>
         </div>
-        <LyricScroll />
+        <LyricScroll :id="String(songDetail.id)" />
         <div class="comments-container">
           <div class="big-title">评论</div>
           <div v-if="hotComments.length > 0" class="hot-comments">
@@ -178,7 +178,7 @@ function playAudio() {
   localStorage.setItem('curIndex', 0)
 }
 function toVisualPage(){
-  router.push('/visualSong?id=' + songDetail.value.id)
+  router.push('/visualSong')
 }
 
 const hotComments = ref([]);

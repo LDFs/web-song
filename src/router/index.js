@@ -104,7 +104,7 @@ const router = createRouter({
       path: '/visualSong',
       name: 'visualSong',
       meta: {
-        keepAlive: false
+        keepAlive: true
       },
       component: () => import('@/views/songView/VisualPlay.vue')
     }

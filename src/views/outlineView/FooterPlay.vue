@@ -161,10 +161,9 @@ watch(songUrlInfo, (v) => {
 })
 
 watch(isPlay, (v) => {
+  audioRef.value.pause()
   if (v) {
     audioRef.value.play()
-  }else {
-    audioRef.value.pause()
   }
 })
 
@@ -248,6 +247,10 @@ const loopStatus = ref(0)   // 0-循环，1-随机，2-单曲
  * @param {int} m 标志，1-前一首，2-后一首
  */
 function playChange(m) {
+  audioRef.value.pause()
+  if(isPlay.value){
+    store.commit('setIsPlay', false)
+  }
   let nextI = -1
   if (curList.value.length > 0) {
     // 循环或单曲，前后切换都是只改变一位
@@ -272,6 +275,8 @@ function playChange(m) {
       localStorage.setItem('songInfo', JSON.stringify(song))
       localStorage.setItem('songUrlInfo', JSON.stringify(res.data.data[0]))
       localStorage.setItem('curIndex', nextI)
+
+      audioRef.value.play()
     })
 }
 function playSongInList(index) {

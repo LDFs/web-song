@@ -24,7 +24,7 @@
           >/</span></span>
         </div>
       </div>
-      <LyricScroll :containerStyle="{minWidth: '400px',width: '30vw',fontSize: '1rem' }" />
+      <LyricScroll :containerStyle="{minWidth: '400px',width: '38vw',fontSize: '1rem' }" :id="String(musicInfo.id)" />
     </div>
     
   </div>
@@ -111,9 +111,7 @@ onMounted(() => {
     canvasCtx.restore()
   }
 
-  
 })
-
 function changePlay(){
   store.commit('setIsPlay', !isPlay.value)
 }

@@ -15,20 +15,18 @@
 
 <script setup>
 import { ref, watch, computed } from "vue";
-import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import {
   getSongLyric,
 } from "@/network/getSongsInfo";
-import { getParamsByKey, getThemeColors } from "@/utils/utils";
+import { getThemeColors } from "@/utils/utils";
 
 const store = useStore();
-const route = useRoute();
 
-defineProps(
+const props = defineProps(
   {
     containerStyle: Object,
-
+    id: String
   }
 )
 
@@ -36,27 +34,26 @@ const lyric = ref("");
 const lyrics = ref([]);
 const lyricIndex = ref(0);
 const oneLyricHeight = ref(24);
-const id = ref(getParamsByKey(route.fullPath, "id"));
-const path = computed(() => route.fullPath);
+// const id = ref(getParamsByKey(route.fullPath, "id"));
+// const path = computed(() => route.fullPath);
 const curPlaySongId = ref(computed(() => store.state.curSongInfo.id));
-watch(path, (v) => {
-  id.value = getParamsByKey(v, "id");
+watch(props, () => {
   updateInfo();
 });
 let curDuration = ref(
   computed(() => {
-    if (id.value == String(curPlaySongId.value)) {
+    if (props.id == String(curPlaySongId.value)) {
       return store.state.curPlayDt;
     } else return 0;
   })
 );
 watch(curPlaySongId, (v) => {
-  if (v == id.value) curDuration = computed(() => store.state.curPlayDt);
+  if (v == props.id) curDuration = computed(() => store.state.curPlayDt);
 });
 const lyricRef = ref(null);
 updateInfo()
 function updateInfo(){
-  getSongLyric(id.value).then((res) => {
+  getSongLyric(props.id).then((res) => {
     lyric.value = res.data.lrc.lyric;
     createLrcObj(lyric.value);
   });
