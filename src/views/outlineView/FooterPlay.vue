@@ -172,8 +172,10 @@ onMounted(() => {
   const url = localStorage.getItem('songUrlInfo')
   if(info) {
     store.commit('setSongInfo', JSON.parse(info))
-    store.commit('setSongUrlInfo', JSON.parse(url))
     store.commit('setCurIndex', localStorage.getItem('curIndex') || 0)
+  }
+  if(url) {
+    store.commit('setSongUrlInfo', JSON.parse(url))
   }
 })
 

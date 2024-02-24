@@ -19,12 +19,12 @@ const props = defineProps({
   },
   jumpUrl: {
     type: String,
-    default: '/artistSongs'
+    default: ''
   }
 })
 const router = useRouter()
 function jumpTo(){
-  if(!props.jumpTo) return
+  if(!props.jumpUrl) return
   router.push(`${props.jumpUrl}?id=${props.item.id}`)
 }
 </script>

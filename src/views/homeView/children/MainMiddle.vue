@@ -14,7 +14,7 @@
           <div class="more" @click="gotoList('all')">更多<el-icon><Right /></el-icon></div>
         </template>
       </LittleNav>
-      <div style="margin-top: 10px;">
+      <div style="margin-top: 10px; height: 466px;">
         <CoverList :mList="recommandCoverList" :row="2" :col="4" type="0" />
       </div>
       <LittleNav :title="'个性推荐'"></LittleNav>

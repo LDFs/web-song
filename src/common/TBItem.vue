@@ -2,7 +2,9 @@
 <template>
   <div class="item-container">
     <div class="cover" @click="gotoListDetal">
-      <img @load='imgOnLoad' :src="coverUrl" alt="" >
+      <div style="width: 100%; aspect-ratio: 1;">
+        <img @load='imgOnLoad' :src="coverUrl" alt="" >
+      </div>
       <div class="count-play">
         <div>{{ displayCount }}</div>
         <div class="icon"><el-icon ><VideoPlay /></el-icon></div>

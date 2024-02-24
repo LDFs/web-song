@@ -1,6 +1,7 @@
 <script setup>
 import {ref} from 'vue'
 import { RouterView } from 'vue-router'
+import {loginTmp, loginStatus} from '@/network/user'
 import Header from '@/views/outlineView/TopHeader.vue'
 import FooterPlay from './views/outlineView/FooterPlay.vue';
 
@@ -31,6 +32,23 @@ const listenMouse = function(e){
     mouseBootom.value = false
   }
 }
+
+// loginStatus().then(res => {
+//   console.log(res)
+//   if(res.data.data.count){
+    
+//   }
+// })
+// loginTmp().then(res => {
+//       console.log(res)
+//       if(res.data.code === 200){
+//         const arr = res.data.cookie.split(';')
+//         arr.forEach(item => {
+//           document.cookie = item
+//         })
+//       }
+//     })
+
 
 </script>
 

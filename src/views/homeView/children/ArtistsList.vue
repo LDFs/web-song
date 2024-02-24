@@ -4,7 +4,7 @@
       <span>入驻歌手</span>
       <span class="see-all">查看全部<el-icon><ArrowRight /></el-icon></span>
     </div>
-    <LRItem class="artist-item" v-for="item in artistsList" :key="item.name" :item="item" />
+    <LRItem class="artist-item" v-for="item in artistsList" :key="item.name" :item="item" :jumpUrl="'/artistSongs'" />
   </div>
 </template>
 

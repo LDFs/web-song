@@ -51,7 +51,7 @@ function imageLoad() {
   count.value += 1;
 }
 watch(count, (c) => {
-  if (props.mList.length >= props.col*props.row && c > props.col * props.row * 0.9) {
+  if (props.mList.length >= props.col*props.row && c > props.col * props.row * 0.5) {
     emit("imgLoad");
   }else if(c == props.mList.length){
     emit("imgLoad")

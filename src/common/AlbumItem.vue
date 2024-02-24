@@ -4,7 +4,10 @@
     <div class="cover" @click="gotoAlbum">
       <span class="msk"></span>
       <span class="border"></span>
-      <img @load='imgOnLoad' :src="item.picUrl" alt="" >
+      <div style="aspect-ratio: 1; width: 80%; position: relative;">
+        <div style="width: 100%; height: 100%; background-color: #ccc;"></div>
+        <img @load='imgOnLoad' :src="item.picUrl" alt="" >
+      </div>
     </div>
     <div class="title text-line2">{{ item.name }}</div>
     <div class="artist text-line2">
@@ -15,7 +18,7 @@
 </template>
 
 <script setup>
-// import {ref, computed} from 'vue'
+import {ref} from 'vue'
 import {useRouter} from 'vue-router'
 
 const props = defineProps({
@@ -27,10 +30,11 @@ const props = defineProps({
     // return pre + '/' + cur.name
   // }, '')
 // })
-
+const loading = ref(true)
 const emit = defineEmits(['imgLoad'])
 function imgOnLoad(){
   emit('imgLoad')
+  loading.value = false
 }
 const router = useRouter()
 function gotoAlbum(){
@@ -44,7 +48,7 @@ function gotoAlbum(){
 }
 .cover {
   position: relative;
-  min-height: 130px;
+  // min-height: 130px;
   .msk {
     display: inline-block;
     width: 72%;
@@ -71,7 +75,12 @@ function gotoAlbum(){
     box-shadow: 1px 1px 7px 1px #6a6a6a69;
   }
   img {
-    width: 80%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    // height: 0;
+    // padding-bottom: 100%;
+    // object-fit: contain;
   }
 }
 .cover:hover {
