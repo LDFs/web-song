@@ -175,7 +175,6 @@ function playAudio() {
 
   localStorage.setItem('songInfo', JSON.stringify(songDetail.value))
   localStorage.setItem('songUrlInfo', JSON.stringify(songUrlInfo.value))
-  localStorage.setItem('curIndex', 0)
 }
 function toVisualPage(){
   router.push('/visualSong')

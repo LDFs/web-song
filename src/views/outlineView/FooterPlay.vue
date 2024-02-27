@@ -156,14 +156,16 @@ const isPlay = ref(computed(() => store.state.isPlay))
 const audioRef = ref(null)
 
 watch(songUrlInfo, (v) => {
+  audioRef.value.pause()
   audioRef.value.src = v.url
-  setAudioTagsInfo()
+  playAudio()
 })
 
 watch(isPlay, (v) => {
-  audioRef.value.pause()
   if (v) {
     audioRef.value.play()
+  }else {
+    audioRef.value.pause()
   }
 })
 
@@ -268,18 +270,18 @@ function playChange(m) {
   }
   if(nextI == -1) return ;
   const song = curList.value[nextI]
-    getSongUrl(song.id).then((res) => {
-      store.commit('setSongInfo', song)
-      store.commit('setSongUrlInfo', res.data.data[0])
-      store.commit('setIsPlay', true)
-      store.commit('setCurIndex', nextI)
+  getSongUrl(song.id).then((res) => {
+    store.commit('setSongInfo', song)
+    store.commit('setSongUrlInfo', res.data.data[0])
+    store.commit('setIsPlay', true)
+    store.commit('setCurIndex', nextI)
 
-      localStorage.setItem('songInfo', JSON.stringify(song))
-      localStorage.setItem('songUrlInfo', JSON.stringify(res.data.data[0]))
-      localStorage.setItem('curIndex', nextI)
+    localStorage.setItem('songInfo', JSON.stringify(song))
+    localStorage.setItem('songUrlInfo', JSON.stringify(res.data.data[0]))
+    localStorage.setItem('curIndex', nextI)
 
-      audioRef.value.play()
-    })
+    audioRef.value.play()
+  })
 }
 function playSongInList(index) {
   const song = curList.value[index]

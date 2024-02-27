@@ -80,7 +80,7 @@ const router = createRouter({
       path: '/artistSongs',
       name: 'artistSongs',
       meta: {
-        keepAlive: false 
+        keepAlive: true 
       },
       component: () => import('@/views/artist/ArtistSongs.vue')
     },
