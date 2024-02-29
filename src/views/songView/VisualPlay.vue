@@ -46,6 +46,142 @@ const isPlay = computed(() => store.state.isPlay)
 const canvasElement = ref(null)
 
 const [ , , deepColor] = getThemeColors()
+const visualType = ref('frequencyLine')
+
+function roundRectangle(dataArray, canvasCtx, analyser){
+  const randomData = Uint8Array.from(new Uint8Array(120), (v,k) => k);
+  randomData.sort(() => Math.random() - 0.5)
+  draw()
+  function draw() {
+    requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArray);    // 音频的频率数据  这种方式获得的音频数据，每首歌最后1/4部分都为0
+    const frontData = dataArray.slice(0, 120)
+    
+    const bData = []
+    randomData.forEach(value => {
+      bData.push(frontData[value])
+    })
+    const angle = Math.PI * 2 / bData.length;
+    if(!canvasElement.value){
+      return 
+    }
+    // 清除上次绘制记录
+    canvasCtx.clearRect(0, 0, canvasElement.value.width, canvasElement.value.height)
+
+    // 1. 圆角矩形
+    // 背景填充颜色
+    canvasCtx.fillStyle = deepColor.value
+    // 通过将当前状态推入堆栈来保存画布的整个状态
+    canvasCtx.save()
+    // 向当前矩阵添加平移变换
+    canvasCtx.translate(canvasElement.value.width/2, canvasElement.value.height/2)
+    
+    bData.forEach((value, index) => {
+      canvasCtx.save()
+      // 向变换矩阵添加一个旋转
+      canvasCtx.rotate(angle * index)
+      // 创建新路径
+      canvasCtx.beginPath()
+      const h = value / 256 * 60
+      // 绘制圆角矩形
+      canvasCtx.roundRect(-4, 140, 4, (h<4)?4: h)
+      // 填充矩形
+      canvasCtx.fill()
+      // 通过弹出绘图状态堆栈中的顶部条目来恢复最近保存的画布状态
+      canvasCtx.restore()
+    })
+    canvasCtx.restore()
+  }
+}
+
+function lineFreauency(dataArray, canvasCtx, analyser){
+  
+  const randomData = Uint8Array.from(new Uint8Array(120), (v,k) => k);
+  randomData.sort(() => Math.random() - 0.5)
+  draw()
+  function draw() {
+    requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArray);    // 音频的频率数据  这种方式获得的音频数据，每首歌最后1/4部分都为0
+    
+    const frontData = dataArray.slice(0, 120)
+    
+    const bData = []
+    randomData.forEach(value => {
+      bData.push(frontData[value])
+    })
+    const angle = Math.PI * 2 / bData.length;
+    if(!canvasElement.value){
+      return 
+    }
+    // 清除上次绘制记录
+    canvasCtx.clearRect(0, 0, canvasElement.value.width, canvasElement.value.height)
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = deepColor.value
+    canvasCtx.globalAlpha = 0.5; // 设置绘图的透明度, 并且同时会显示多条线
+    // 通过将当前状态推入堆栈来保存画布的整个状态
+    canvasCtx.save()
+    // 向当前矩阵添加平移变换
+    canvasCtx.translate(canvasElement.value.width/2, canvasElement.value.height/2)
+    let x = 0;
+    canvasCtx.beginPath();
+    for(let i = 0; i < bData.length; i++) {
+      canvasCtx.save()
+      canvasCtx.rotate(angle * i)
+      const y =  bData[i] / 256 * 60; 
+      if(i === 0) {
+        canvasCtx.moveTo(x, y +140); 
+      } else {
+        canvasCtx.lineTo(x, y +140); 
+      }
+      canvasCtx.restore()
+    }
+    canvasCtx.lineTo(0, bData[0] / 256 * 60 + 140);
+    canvasCtx.restore()
+    canvasCtx.stroke();
+  }
+
+}
+
+function lineTimeDomain(dataArray, canvasCtx, analyser){
+  draw()
+  function draw() {
+    requestAnimationFrame(draw);
+    analyser.getByteTimeDomainData(dataArray);      // 音频的波形数据  这种方式绘制的曲线抖动很快
+    
+    const angle = Math.PI * 2 / 120;   // 150
+    if(!canvasElement.value){
+      return 
+    }
+    // 清除上次绘制记录
+    canvasCtx.clearRect(0, 0, canvasElement.value.width, canvasElement.value.height) 
+    canvasCtx.lineWidth = 2;
+    canvasCtx.strokeStyle = deepColor.value
+    canvasCtx.globalAlpha = 0.5; // 设置绘图的透明度, 并且同时会显示多条线
+    // 通过将当前状态推入堆栈来保存画布的整个状态
+    canvasCtx.save()
+    // 向当前矩阵添加平移变换
+    canvasCtx.translate(canvasElement.value.width/2, canvasElement.value.height/2)
+
+    let x = 0;
+    canvasCtx.beginPath();
+    for(let i = 0; i < 120; i++) {
+      canvasCtx.save()
+      canvasCtx.rotate(angle * i)
+      const v = dataArray[i] / 128.0;
+      const y = v * canvasElement.value.width /2;
+      if(i === 0) {
+        canvasCtx.moveTo(x, y - 40); 
+      } else {
+        canvasCtx.lineTo(x, y - 40); 
+      }
+      canvasCtx.restore()
+    }
+    canvasCtx.lineTo(0, dataArray[0] / 128.0 * canvasElement.value.width / 2 -40);
+    canvasCtx.restore()
+    canvasCtx.stroke();
+  }
+
+}
 
 onMounted(() => {
   // 创建音频处理图
@@ -60,103 +196,17 @@ onMounted(() => {
 
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
-  // console.log(bufferLength)
-  // console.log(dataArray)
 
   const canvasCtx = canvasElement.value.getContext('2d');
-  // canvasCtx.width = 400;
-  // canvasCtx.height = 400;
 
-  const randomData = Uint8Array.from(new Uint8Array(120), (v,k) => k);
-  randomData.sort(() => Math.random() - 0.5)
-
-  watch(canvasElement, () => {
-    // 没有用
-    console.log('draw...')
-  })
-  let k = 0
-  draw()
-  function draw() {
-    requestAnimationFrame(draw);
-    analyser.getByteFrequencyData(dataArray);    // 音频的频率数据  这种方式获得的音频数据，每首歌最后1/4部分都为0
-    // analyser.getByteTimeDomainData(dataArray);      // 音频的波形数据  这种方式绘制的曲线抖动很快
-    const frontData = dataArray.slice(0, 120)
-
-    if(k < 20){
-      console.log(dataArray)
-    }
-    k++
-    
-    const bData = []
-    randomData.forEach(value => {
-      bData.push(frontData[value])
-    })
-    const angle = Math.PI * 2 / bufferLength;   // 150
-    if(!canvasElement.value){
-      return 
-    }
-    // 清除上次绘制记录
-    canvasCtx.clearRect(0, 0, canvasElement.value.width, canvasElement.value.height)
-
-    // 1. 圆角矩形
-    // 背景填充颜色
-    canvasCtx.fillStyle = '#fff'
-    // 通过将当前状态推入堆栈来保存画布的整个状态
-    canvasCtx.save()
-    // 向当前矩阵添加平移变换
-    canvasCtx.translate(canvasElement.value.width/2, canvasElement.value.height/2)
-    
-    // bData.forEach((value, index) => {
-    //   canvasCtx.save()
-    //   // 向变换矩阵添加一个旋转
-    //   canvasCtx.rotate(angle * index)
-    //   // 创建新路径
-    //   canvasCtx.beginPath()
-    //   const h = value / 256 * 60
-    //   // 绘制圆角矩形
-    //   canvasCtx.roundRect(-4, 140, 4, (h<4)?4: h)
-    //   // 填充矩形
-    //   canvasCtx.fill()
-    //   // 通过弹出绘图状态堆栈中的顶部条目来恢复最近保存的画布状态
-    //   canvasCtx.restore()
-    // })
-    // canvasCtx.restore()
-
-
-    // 2. 曲线
-    canvasCtx.lineWidth = 2;
-    canvasCtx.strokeStyle = deepColor.value;
-    canvasCtx.globalAlpha = 0.5; // 设置绘图的透明度, 并且同时会显示多条线
-    canvasCtx.lineJoin = 'round';
-    canvasCtx.lineCap = 'round';
-    canvasCtx.shadowBlur = 10;
-    canvasCtx.shadowColor = "rgba(0, 0, 0, 0.5)";
-    let x = 0;
-    canvasCtx.beginPath();
-    // const sliceWidth = canvasElement.value.width * 1.0 / dataArray.length;
-    for(let i = 0; i < bufferLength; i++) {
-      canvasCtx.save()
-      canvasCtx.rotate(angle * i)
-      const y =  dataArray[i] / 256 * 60; 
-      // const v = dataArray[i] / 128.0;
-      // const y = v * canvasElement.value.width /2;
-      if(i === 0) {
-        canvasCtx.moveTo(x, y +140); 
-      } else {
-        canvasCtx.lineTo(x, y +140); 
-      }
-      canvasCtx.restore()
-      if(i < 10 && k < 10){
-        console.log(k, i, dataArray[i], x, y)
-      }
-      // x += sliceWidth
-    }
-    // canvasCtx.lineTo(0, dataArray[0] / 128.0 * canvasElement.value.width / 2 -40);
-    canvasCtx.lineTo(0, dataArray[0] / 256 * 60 + 140);
-    canvasCtx.restore()
-    canvasCtx.stroke();
+  if(visualType.value === 'roundRect'){
+    roundRectangle(dataArray, canvasCtx, analyser)
+  }else if(visualType.value === 'frequencyLine'){
+    lineFreauency(dataArray, canvasCtx, analyser)
+  }else {
+    lineTimeDomain(dataArray, canvasCtx, analyser)
   }
-
+  
 })
 function changePlay(){
   store.commit('setIsPlay', !isPlay.value)

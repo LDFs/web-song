@@ -122,6 +122,7 @@ import LRItem from "@/common/LRItem.vue";
 import LyricScroll from "./LyricScroll.vue";
 
 import ThumbUp from "@/components/icons/IconThumbUp.vue";
+import { ElMessage } from 'element-plus'
 
 const [, lightColor] = getThemeColors()
 
@@ -146,12 +147,19 @@ function updateInfo() {
   });
   getSongUrl(id.value).then((res) => {
     // console.log(res.data.data[0].freeTrialInfo)
-    songUrlInfo.value = res.data.data[0];
+    if(res.data.data){
+      songUrlInfo.value = res.data.data[0];
+    }
   });
 
   getComments(id.value).then((res) => {
-    hotComments.value = res.data.hotComments;
-    comments.value = res.data.comments;
+    if(res.data.comments){
+      hotComments.value = res.data.hotComments;
+      comments.value = res.data.comments;
+    }else {
+      comments.value = '当前网络拥挤，未获得评论数据'
+    }
+    
   });
 
   getSongRelatedLists(id.value).then((res) => {
@@ -168,6 +176,13 @@ function updateInfo() {
 }
 
 function playAudio() {
+  if(Object.keys(songUrlInfo.value).length === 0){
+    ElMessage({
+      message: '当前网络拥挤，未获得歌曲数据',
+      type: 'warning',
+    })
+    return 
+  }
   store.commit("setSongInfo", songDetail.value);
   store.commit("setSongUrlInfo", songUrlInfo.value);
   store.commit("setIsPlay", true);

@@ -34,13 +34,8 @@ const listenMouse = function(e){
 }
 
 // loginStatus().then(res => {
-//   console.log(res)
-//   if(res.data.data.count){
-    
-//   }
-// })
-// loginTmp().then(res => {
-//       console.log(res)
+//   if(!res.data.data.count){
+//     loginTmp().then(res => {
 //       if(res.data.code === 200){
 //         const arr = res.data.cookie.split(';')
 //         arr.forEach(item => {
@@ -48,6 +43,8 @@ const listenMouse = function(e){
 //         })
 //       }
 //     })
+//   }
+// })
 
 
 </script>

@@ -23,40 +23,52 @@ function getRecomMusicListByCat(cat='全部', order='hot', limit=20, offset=0) {
 }
 
 // 获取精品歌单
-function getHighqualityList(cat='全部'){
+function getHighqualityList(cat='全部', order='hot', limit=20, offset=0){
   return request({
     url: '/top/playlist',
     params: {
-      cat
+      cat,order, limit, offset
     }
   })
 }
 
 // 获取推荐歌单
-function getRecomMusicList(){
+function getRecomMusicList(limit=10){
   return request({
-    url: '/personalized'
+    url: '/personalized',
+    params: {
+      limit
+    }
   })
 }
 
 // 获取推荐新歌
-function getRecomNewMusic(){
+function getRecomNewMusic(limit=10){
   return request({
-    url: '/personalized/newsong'
+    url: '/personalized/newsong',
+    params: {
+      limit
+    }
   })
 }
 
 // 新碟上架
-function getNewAlbum(){
+function getNewAlbum(limit=10, offset=0, type='new', area='all'){
   return request({
-    url: '/top/album'
+    url: '/top/album',
+    params: {
+      limit, offset, type, area
+    }
   })
 }
 
 // 全部新碟
-function getAllAlbum(){
+function getAllAlbum(limit=30, offset=0, area='all'){
   return request({
-    url: '/album/new'
+    url: '/album/new',
+    params: {
+      limit, offset, area
+    }
   })
 }
 

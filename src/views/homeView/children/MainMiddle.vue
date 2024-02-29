@@ -67,7 +67,7 @@ getRecomMusicListByCat('全部', 'hot').then(res => {
 })
 
 // 个性推荐
-getRecomMusicList().then(res => {
+getRecomMusicList(4).then(res => {
   recommandPersonalizedList.value = res.data.result;
 })
 getNewAlbum().then(res => {
