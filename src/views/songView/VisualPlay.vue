@@ -15,7 +15,7 @@
       </div>
     </div>
     <div>
-      <div style="font-size: .8rem; color: #6d6d6d;display:flex;flex-direction: column; gap: 10px;align-items: center;">
+      <div style="font-size: .8rem; color: rgb(81 81 81);display:flex;flex-direction: column; gap: 10px;align-items: center;">
         <div style="font-weight: 700;font-size: 1.6rem;">{{ musicInfo.name }}</div>
         <div>专辑：{{ musicInfo.al.name }}</div>
         <div>歌手：
@@ -46,7 +46,7 @@ const isPlay = computed(() => store.state.isPlay)
 const canvasElement = ref(null)
 
 const [ , , deepColor] = getThemeColors()
-const visualType = ref('frequencyLine')
+const visualType = ref('roundRect')
 
 function roundRectangle(dataArray, canvasCtx, analyser){
   const randomData = Uint8Array.from(new Uint8Array(120), (v,k) => k);

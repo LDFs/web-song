@@ -226,8 +226,10 @@ function playAudio() {
     if (!audioRef.value.src && songUrlInfo.value?.url) {
       audioRef.value.src = songUrlInfo.value.url
     }
-    audioRef.value.play()
-    store.commit('setIsPlay', true)
+    if(isPlay.value){
+      audioRef.value.play()
+    }
+    
     setAudioTagsInfo()
   }
 }

@@ -82,7 +82,7 @@ getTopArtists().then(res => {
       artistsList.value.push({
         id: item.id,
         title: item.name,
-        imgUrl: item.picUrl,
+        imgUrl: item.img1v1Url,
         desc: desc
       })
     })

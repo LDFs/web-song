@@ -18,11 +18,11 @@ getBannerInfo().then(res => {
   bannerInfo.value = banner
 })
 
-const windowWidth = window.innerWidth
-const carouselHeight = ref('30vh')
-if(windowWidth <= '1560'){
-  carouselHeight.value = '230px'
-}
+// const windowWidth = window.innerWidth
+// const carouselHeight = ref('27vh')
+// if(windowWidth <= '1560'){
+//   carouselHeight.value = '230px'
+// }
 const noPlay = ref(false)
 
 </script>
@@ -33,13 +33,36 @@ const noPlay = ref(false)
   justify-content: center;
 }
 .el-carousel {
-  width: 40vw;
-  min-width: 620px;
+  width: 54vw;
+  min-width: 740px;
   
 }
 .el-carousel__container {
-  height: v-bind(carouselHeight);
-  min-height: 230px;
+  width: 74%;
+  margin: 0 auto;
+}
+@media screen and (max-width: 1560px)  {
+  .el-carousel__container {
+    max-height: 230px;
+  }
+}
+@media screen and (min-width: 1560px)  {
+  .el-carousel__container {
+    height: 14.8vw;
+  }
+}
+.el-carousel__arrow {
+  width: 10%;
+  height: 100%;
+  border-radius: 0;
+  background-color: #ccc;
+  font-size: 3rem;
+}
+.el-carousel__arrow--left {
+  left: -10%;
+}
+.el-carousel__arrow--right {
+  right: -10%;
 }
 // 在不写 scoped 的style里可以覆盖
 // .swiper-container .el-carousel__arrow {
