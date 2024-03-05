@@ -37,7 +37,7 @@
       <div class="title-2rem">{{ selectedText }}</div>
       <div class="artists-cover-part">
         <div v-for="item in artists.slice(0, 10)" :key="item.id" class="art-item" @click="gotoSongs(item.id)">
-          <img :src="item.picUrl" alt="" />
+          <img :src="`${item.picUrl}?param=130y130`" alt="" />
           <div>{{ item.name }}</div>
         </div>
       </div>

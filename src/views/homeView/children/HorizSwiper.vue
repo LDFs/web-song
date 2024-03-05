@@ -23,7 +23,7 @@ getBannerInfo().then(res => {
 // if(windowWidth <= '1560'){
 //   carouselHeight.value = '230px'
 // }
-const noPlay = ref(false)
+const noPlay = ref(true)
 
 </script>
 

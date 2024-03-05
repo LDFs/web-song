@@ -133,8 +133,10 @@ const path = computed(() => route.fullPath);
 const id = ref(getParamsByKey(route.fullPath, "id"));
 const curPlaySongId = ref(computed(() => store.state.curSongInfo.id));
 watch(path, (v) => {
-  id.value = getParamsByKey(v, "id");
-  updateInfo();
+  if(v.startsWith('/song')){
+    id.value = getParamsByKey(v, "id");
+    updateInfo();
+  }
 });
 const songDetail = ref({});
 const songUrlInfo = ref({});
@@ -160,6 +162,8 @@ function updateInfo() {
       comments.value = '当前网络拥挤，未获得评论数据'
     }
     
+  }, err => {
+    console.log('获取歌曲评论失败,', err)
   });
 
   getSongRelatedLists(id.value).then((res) => {

@@ -6,7 +6,7 @@
       <span class="border"></span>
       <div style="aspect-ratio: 1; width: 80%; position: relative;">
         <div style="width: 100%; height: 100%; background-color: #ccc;"></div>
-        <img @load='imgOnLoad' :src="item.picUrl" alt="" >
+        <img @load='imgOnLoad' :src="`${item.blurPicUrl}?param=130y130`" alt="" >
       </div>
     </div>
     <div class="title text-line2">{{ item.name }}</div>

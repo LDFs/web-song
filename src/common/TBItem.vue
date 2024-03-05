@@ -3,7 +3,7 @@
   <div class="item-container">
     <div class="cover" @click="gotoListDetal">
       <div style="width: 100%; aspect-ratio: 1;">
-        <img @load='imgOnLoad' :src="coverUrl" alt="" >
+        <img @load='imgOnLoad' :src="`${coverUrl}?param=140y140`" alt="" >
       </div>
       <div class="count-play">
         <div>{{ displayCount }}</div>

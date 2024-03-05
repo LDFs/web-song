@@ -62,8 +62,10 @@ const route = useRoute()
 let id = ref(getParamsByKey(route.fullPath, 'id'))
 const path = computed(() => route.fullPath)
 watch(path, (v) => {
-  id.value = getParamsByKey(v, 'id')
-  updateData()
+  if(v.startsWith('/artistSong')){
+    id.value = getParamsByKey(v, 'id')
+    updateData()
+  }
 })
 updateData()
 const songs = ref([])

@@ -21,7 +21,7 @@
       <CoverList v-if="type === '10'" :mList="resLists" :type="'1'" :col="5"/>
       <div v-if="type === '100'" class="artists-res-container">
         <div v-for="item in resLists" :key="item.id" @click="gotoArtist(item.id)">
-          <img :src="item.picUrl" alt="">
+          <img :src="`${item.picUrl}?param=140y140`" alt="">
           <div>{{ item.name }}</div>
         </div>
       </div>

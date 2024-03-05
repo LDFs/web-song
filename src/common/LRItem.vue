@@ -1,7 +1,7 @@
 // 左边封面 右边名称的列表项
 <template>
   <div class="lr-item" @click="jumpTo">
-    <img :src="item.imgUrl || item.picUrl" alt="" :style="{width: imgWidth}">
+    <img :src="`${item.imgUrl || item.picUrl}?param=140y140`" alt="" :style="{width: imgWidth}">
     <div class="lr-text">
       <div class="text-line2" v-if="item.title || item.name">{{ item.title || item.name }}</div>
       <div class="desc text-line2" v-if="item.desc">{{ item.desc }}</div>

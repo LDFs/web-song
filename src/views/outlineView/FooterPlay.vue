@@ -158,7 +158,10 @@ const audioRef = ref(null)
 watch(songUrlInfo, (v) => {
   audioRef.value.pause()
   audioRef.value.src = v.url
-  playAudio()
+  if(isPlay.value){
+    audioRef.value.play()
+    setAudioTagsInfo()
+  }
 })
 
 watch(isPlay, (v) => {
@@ -226,9 +229,8 @@ function playAudio() {
     if (!audioRef.value.src && songUrlInfo.value?.url) {
       audioRef.value.src = songUrlInfo.value.url
     }
-    if(isPlay.value){
-      audioRef.value.play()
-    }
+    store.commit('setIsPlay', true)
+    audioRef.value.play()
     
     setAudioTagsInfo()
   }
@@ -402,7 +404,7 @@ const [ , lightColor, deepColor] = getThemeColors()
   right: 0;
   width: 3rem;
   height: 1.4rem;
-  background-color: #3f3e3e;
+  background-color: v-bind(deepColor);
   border-radius: 10px 10px 0 0;
   text-align: center;
   .lock-item {
