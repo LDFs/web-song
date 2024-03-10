@@ -240,7 +240,7 @@ function gotoList(id) {
     img {
       width: 60%;
       border-radius: 50%;
-      transform: translate(20%, 20%); // 这个的百分比 相对的是父组件的大小
+      transform: translate(20%, 20%);
     }
     .under-cover {
       position: absolute;

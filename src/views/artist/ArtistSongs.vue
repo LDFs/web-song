@@ -44,7 +44,7 @@
           class="related-item"
           @click="changeArtist(item.id)"
         >
-          <img :src="item.picUrl" alt="" />
+          <img :src="`${item.picUrl}?param=60y60`" alt="" />
           <div class="name">{{ item.name }}</div>
         </div>
       </div>

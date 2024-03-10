@@ -38,7 +38,7 @@
           <span>播放：{{ detailInfo.playCount }}次</span>
         </div>
         <div>
-          <el-table :data="musicLists" style="width: 100%" @cell-click="clickItem">
+          <el-table :data="musicLists" style="width: 100%" @cell-click="clickItem" v-loading="loading">
             <el-table-column type="index" :index="(index) => index + 1" />
             <el-table-column
               prop="name"
@@ -62,6 +62,15 @@
             </el-table-column>
             <el-table-column prop="al.name" class-name="link-text" label="专辑" />
           </el-table>
+          <el-pagination
+            v-model:current-page="currentPage"
+            :page-size="pageSize"
+            layout="total, prev, pager, next"
+            :page-sizes="sizeOption"
+            :total="total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
         </div>
       </div>
     </div>
@@ -83,12 +92,13 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { getListDetail, getRelatedList } from "@/network/getPlayList";
 import { getParamsByKey, formatDateByNumber, formatMS, getThemeColors } from "@/utils/utils";
 import LRItem from "@/common/LRItem.vue";
+import {useTable} from '@/utils/useTable'
 
 const [mainColor, lightColor] = getThemeColors()
 
@@ -101,14 +111,23 @@ watch(path, (v) => {
   updateInfo();
 });
 
-const page = ref(0);
-const count = ref(20);
+const currentPage = ref(0);
+const sizeOption = [10, 20, 50, 100, 200]; // 每页大小选项
+const pageSize = ref(sizeOption[0]); //每页大小
+const total = ref(0); // 总条数
 
 const detailInfo = ref({});
 const musicLists = ref([]);
 const creatTime = ref("");
 const creator = ref({});
 const subscribes = ref([]);
+
+// const [allData, refresh, loading, pagination] = useTable(getListDetail, id.value)
+
+// onMounted(() => {
+//   refresh()
+// })
+
 updateInfo();
 function updateInfo() {
   getListDetail(id.value).then((res) => {
@@ -120,9 +139,10 @@ function updateInfo() {
     musicLists.value = [];
 
     const m = res.data.playlist.tracks.slice(
-      page.value * count.value,
-      (page.value + 1) * count.value
+      currentPage.value * pageSize.value,
+      (currentPage.value + 1) * pageSize.value
     );
+    total.value = res.data.playlist.trackCount
     // 处理每首歌的时长
     m.map((item) => {
       let d = formatMS(item.dt);
@@ -136,6 +156,14 @@ function updateInfo() {
       });
     });
   });
+}
+
+function handleSizeChange(){
+
+}
+
+function handleCurrentChange() {
+  
 }
 
 const relatedList = ref([]);

@@ -31,22 +31,34 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import LyricScroll from "./LyricScroll.vue";
 import IconPause from '@/components/icons/IconPause2.vue'
 import IconPlay from '@/components/icons/IconPlay2.vue'
 import { getThemeColors } from '@/utils/utils'
 
+import { useAVCircle } from 'vue-audio-visual'
+
 const store = useStore()
 const audio = computed(() => store.state.audio)
 const musicInfo = computed(() => store.state.curSongInfo)
 const isPlay = computed(() => store.state.isPlay)
+const songUrlInfo = computed(() => store.state.curSongUrlInfo)
 
 const canvasElement = ref(null)
 
-const [ , , deepColor] = getThemeColors()
-const visualType = ref('roundRect')
+const [ , lightColor, deepColor] = getThemeColors()
+const visualType = ref('frequencyLine')
+
+// useAVCircle(audio, canvasElement, { 
+//   src: songUrlInfo.value.url, 
+//   canvHeight: 400, 
+//   canvWidth: 400, 
+//   barColor: lightColor.value,
+//   progress: false,
+//   outlineColor: lightColor.value
+// })
 
 function roundRectangle(dataArray, canvasCtx, analyser){
   const randomData = Uint8Array.from(new Uint8Array(120), (v,k) => k);

@@ -320,6 +320,7 @@ function musicVolumnChange() {
 }
 
 const [ , lightColor, deepColor] = getThemeColors()
+// useAVBars(audioRef, canu, { src: songUrlInfo.value.url, canvHeight: 40, canvWidth: 200, barColor: lightColor.value })
 </script>
 
 <style>

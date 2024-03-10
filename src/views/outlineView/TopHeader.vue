@@ -154,12 +154,14 @@ async function qrLogin() {
     } else if (res.code === 802) {
       userNickname.value = res.nickname;
       userAvater.value = res.avatarUrl;
+      console.log('用户信息：', res)
     } else if (res.code === 803) {
       ElMessage({
         message: "登录成功",
         type: "success",
       });
       // document.cookie = res.cookie   // 保存cookie
+      console.log('cookie信息：', res)
       const arr = res.cookie.split(';')
       arr.forEach(item => {
         document.cookie = item
