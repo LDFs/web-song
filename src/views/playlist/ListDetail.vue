@@ -89,6 +89,7 @@
       />
     </div>
   </div>
+  <VirtualList :listData="cirtualLis" />
 </template>
 
 <script setup>
@@ -99,6 +100,10 @@ import { getListDetail, getRelatedList } from "@/network/getPlayList";
 import { getParamsByKey, formatDateByNumber, formatMS, getThemeColors } from "@/utils/utils";
 import LRItem from "@/common/LRItem.vue";
 import {useTable} from '@/utils/useTable'
+import VirtualList from './VirtualList.vue'
+
+const cirtualLis = new Array(100000).fill(0).map((item, index) => index+'(￣o￣) . z Z')
+
 
 const [mainColor, lightColor] = getThemeColors()
 
@@ -110,6 +115,8 @@ watch(path, (v) => {
   id.value = getParamsByKey(v, "id");
   updateInfo();
 });
+
+console.trace('trace in listDetail page.')
 
 const currentPage = ref(0);
 const sizeOption = [10, 20, 50, 100, 200]; // 每页大小选项

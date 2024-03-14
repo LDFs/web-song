@@ -5,6 +5,18 @@
     :style="{ backgroundImage: `url(${musicInfo.al.picUrl})` }"
   ></div>
   <div class="visual-container">
+    <div style="display: flex; align-items: center;">
+      <span>{{ typeText }}</span>
+      <el-select v-model="visualType" placeholder="Select" style="width: 200px; height: 2rem;">
+        <el-option
+          v-for="item in options"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+          @change="$forceUpdate()"
+        />
+      </el-select>
+    </div>
     <div class="right-cover" >
       <canvas ref="canvasElement" class="canvas-item" width="400" height="400"></canvas>
       <button class="al-pic" :class="{pauseRotate: !isPlay}" :style="{backgroundImage: `url(${musicInfo.al.picUrl})`}" >
@@ -31,34 +43,38 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useStore } from 'vuex';
 import LyricScroll from "./LyricScroll.vue";
 import IconPause from '@/components/icons/IconPause2.vue'
 import IconPlay from '@/components/icons/IconPlay2.vue'
 import { getThemeColors } from '@/utils/utils'
 
-import { useAVCircle } from 'vue-audio-visual'
-
 const store = useStore()
 const audio = computed(() => store.state.audio)
 const musicInfo = computed(() => store.state.curSongInfo)
 const isPlay = computed(() => store.state.isPlay)
-const songUrlInfo = computed(() => store.state.curSongUrlInfo)
 
 const canvasElement = ref(null)
 
-const [ , lightColor, deepColor] = getThemeColors()
+const [ , , deepColor] = getThemeColors()
 const visualType = ref('frequencyLine')
-
-// useAVCircle(audio, canvasElement, { 
-//   src: songUrlInfo.value.url, 
-//   canvHeight: 400, 
-//   canvWidth: 400, 
-//   barColor: lightColor.value,
-//   progress: false,
-//   outlineColor: lightColor.value
-// })
+const options = [{
+  value: 'frequencyLine',
+  label: '折线图'
+}, {
+  value: 'roundRect',
+  label: '柱形图'
+}, {
+  value: 'danceLine',
+  label: '跳动的线'
+}]
+const typeText = computed(() => {
+  const index = options.findIndex(item => {
+    return item.value == visualType.value
+  })
+  return options[index].label
+})
 
 function roundRectangle(dataArray, canvasCtx, analyser){
   const randomData = Uint8Array.from(new Uint8Array(120), (v,k) => k);
@@ -107,7 +123,6 @@ function roundRectangle(dataArray, canvasCtx, analyser){
 }
 
 function lineFreauency(dataArray, canvasCtx, analyser){
-  
   const randomData = Uint8Array.from(new Uint8Array(120), (v,k) => k);
   randomData.sort(() => Math.random() - 0.5)
   draw()
@@ -151,7 +166,6 @@ function lineFreauency(dataArray, canvasCtx, analyser){
     canvasCtx.restore()
     canvasCtx.stroke();
   }
-
 }
 
 function lineTimeDomain(dataArray, canvasCtx, analyser){
@@ -192,34 +206,44 @@ function lineTimeDomain(dataArray, canvasCtx, analyser){
     canvasCtx.restore()
     canvasCtx.stroke();
   }
-
 }
+const dataArray = ref(null)
+const canvasCtx = ref(null)
+const analyser = ref(null)
 
 onMounted(() => {
   // 创建音频处理图
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   // 创建一个音频处理对象,用于获取音频时间和频率数据。
-  const analyser = audioCtx.createAnalyser();
+  analyser.value = audioCtx.createAnalyser();
   // 将 audio 元素与音频处理图连接起来
   const source = audioCtx.createMediaElementSource(audio.value);
-  source.connect(analyser);
-  analyser.connect(audioCtx.destination);
-  analyser.fftSize = 512;   // 设置频率数据的精度
+  source.connect(analyser.value);
+  analyser.value.connect(audioCtx.destination);
+  analyser.value.fftSize = 512;   // 设置频率数据的精度
 
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
+  const bufferLength = analyser.value.frequencyBinCount;
+  dataArray.value = new Uint8Array(bufferLength);
 
-  const canvasCtx = canvasElement.value.getContext('2d');
-
-  if(visualType.value === 'roundRect'){
-    roundRectangle(dataArray, canvasCtx, analyser)
-  }else if(visualType.value === 'frequencyLine'){
-    lineFreauency(dataArray, canvasCtx, analyser)
-  }else {
-    lineTimeDomain(dataArray, canvasCtx, analyser)
+  canvasCtx.value = canvasElement.value.getContext('2d');
+  handleDraw(visualType.value)
+})
+function handleDraw(type){
+  if(type === 'roundRect'){
+    roundRectangle(dataArray.value, canvasCtx.value, analyser.value)
+  }else if(type === 'frequencyLine'){
+    lineFreauency(dataArray.value, canvasCtx.value, analyser.value)
+  }else if(type === 'danceLine') {
+    lineTimeDomain(dataArray.value, canvasCtx.value, analyser.value)
   }
+}
+watch(visualType, v => {
+  console.log(v)
+  handleDraw(v)
   
 })
+
+
 function changePlay(){
   store.commit('setIsPlay', !isPlay.value)
 }
