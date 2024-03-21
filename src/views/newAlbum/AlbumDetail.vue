@@ -32,7 +32,7 @@
       </div>
       <div class="songs-list">
         <div class="list-title">歌曲列表</div>
-        <el-table :data="songs" style="width: 100%" @cell-click="clickItem">
+        <el-table :data="songs" style="width: 100%" @cell-click="clickItem" v-loading="loading">
           <el-table-column type="index" :index="(index) => index + 1" />
           <el-table-column
             prop="name"
@@ -88,6 +88,7 @@ const route = useRoute();
 const router = useRouter();
 const path = computed(() => route.fullPath);
 const id = ref(getParamsByKey(route.fullPath, "id"));
+const loading = ref(false)
 watch(path, (v) => {
   id.value = getParamsByKey(v, "id");
   updateData();
@@ -98,6 +99,7 @@ const publishTime = ref("");
 const hotAlbums = ref([]);
 updateData();
 function updateData() {
+  loading.value = true
   getAlbumDetail(id.value).then((res) => {
     albumInfo.value = res.data.album;
     songs.value = res.data.songs;
@@ -116,6 +118,7 @@ function updateData() {
         };
       });
     });
+    loading.value = false
   });
 }
 

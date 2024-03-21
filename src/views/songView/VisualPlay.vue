@@ -6,8 +6,8 @@
   ></div>
   <div class="visual-container">
     <div style="display: flex; align-items: center;">
-      <span>{{ typeText }}</span>
-      <el-select v-model="visualType" placeholder="Select" style="width: 200px; height: 2rem;">
+      <span class="fix-select-text">{{ typeText }}</span>
+      <el-select v-model="visualType" placeholder="Select" style="width: 10vw; height: 2rem;">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -238,9 +238,7 @@ function handleDraw(type){
   }
 }
 watch(visualType, v => {
-  console.log(v)
-  handleDraw(v)
-  
+  handleDraw(v)  
 })
 
 
@@ -272,6 +270,16 @@ function changePlay(){
   display: flex;
   justify-content: center;
   align-items: center;
+  .fix-select-text {
+    display: inline-block;
+    background-color: #fff;
+    height: 2rem;
+    padding: 0 8px;
+    position: relative;
+    right: -2px;
+    border-radius: 2px 0 0 2px;
+    line-height: 2rem;
+  }
 }
 .right-cover {
   position: relative;

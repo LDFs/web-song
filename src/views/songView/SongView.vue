@@ -240,12 +240,12 @@ function gotoList(id) {
     img {
       width: 60%;
       border-radius: 50%;
-      transform: translate(20%, 20%);
+      transform: translate(8%, 8%);
     }
     .under-cover {
       position: absolute;
-      width: 10vw;
-      height: 10vw;
+      width: 70%;
+      aspect-ratio: 1;
       // width: 80%;
       // padding-top: 80%; // 让div的高与宽相等，不设置height，设置padding-top与width大小一致
       background-color: #303030;

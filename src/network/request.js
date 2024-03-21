@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-axios.defaults.withCredentials=true;//让ajax携带cookie
+axios.defaults.withCredentials=true;  // 让axios携带cookie
 
 export function request(config){
   const instance = axios.create({

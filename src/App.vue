@@ -31,7 +31,7 @@ const listenMouse = function(e){
     mouseBootom.value = false
   }
 }
-
+console.log(this)
 
 </script>
 

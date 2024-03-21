@@ -89,7 +89,6 @@
       />
     </div>
   </div>
-  <VirtualList :listData="cirtualLis" />
 </template>
 
 <script setup>
@@ -100,10 +99,6 @@ import { getListDetail, getRelatedList } from "@/network/getPlayList";
 import { getParamsByKey, formatDateByNumber, formatMS, getThemeColors } from "@/utils/utils";
 import LRItem from "@/common/LRItem.vue";
 import {useTable} from '@/utils/useTable'
-import VirtualList from './VirtualList.vue'
-
-const cirtualLis = new Array(100000).fill(0).map((item, index) => index+'(￣o￣) . z Z')
-
 
 const [mainColor, lightColor] = getThemeColors()
 
@@ -116,8 +111,6 @@ watch(path, (v) => {
   updateInfo();
 });
 
-console.trace('trace in listDetail page.')
-
 const currentPage = ref(0);
 const sizeOption = [10, 20, 50, 100, 200]; // 每页大小选项
 const pageSize = ref(sizeOption[0]); //每页大小
@@ -128,6 +121,7 @@ const musicLists = ref([]);
 const creatTime = ref("");
 const creator = ref({});
 const subscribes = ref([]);
+const loading = ref(false)
 
 // const [allData, refresh, loading, pagination] = useTable(getListDetail, id.value)
 
@@ -137,6 +131,7 @@ const subscribes = ref([]);
 
 updateInfo();
 function updateInfo() {
+  loading.value = true
   getListDetail(id.value).then((res) => {
     // console.log(res.data.playlist)
     detailInfo.value = res.data.playlist;
@@ -162,6 +157,7 @@ function updateInfo() {
         al: item.al,
       });
     });
+    loading.value = false
   });
 }
 

@@ -15,7 +15,7 @@
       </div>
       <div class="list-title">热门作品</div>
       <div class="songs-list">
-        <el-table :data="songs" style="width: 100%" @cell-click="clickItem">
+        <el-table :data="songs" style="width: 100%" @cell-click="clickItem" v-loading="loading">
           <el-table-column type="index" :index="(index) => index + 1" />
           <el-table-column prop="name" class-name="link-text" label="歌曲标题" width="180" />
           <el-table-column prop="dlong" label="时长" width="180" />
@@ -61,6 +61,12 @@ import { getArtistTopSongs, getArtistDetailById, getRelatedArtists } from '@/net
 const route = useRoute()
 let id = ref(getParamsByKey(route.fullPath, 'id'))
 const path = computed(() => route.fullPath)
+
+const songs = ref([])
+const artistDetail = ref({})
+const relatedArtists = ref([])
+const loading = ref(false)
+
 watch(path, (v) => {
   if(v.startsWith('/artistSong')){
     id.value = getParamsByKey(v, 'id')
@@ -68,10 +74,9 @@ watch(path, (v) => {
   }
 })
 updateData()
-const songs = ref([])
-const artistDetail = ref({})
-const relatedArtists = ref([])
+
 function updateData() {
+  loading.value = true
   getArtistTopSongs(id.value).then((res) => {
     songs.value = []
     const m = res.data.songs
@@ -85,6 +90,7 @@ function updateData() {
         album: item.al
       })
     })
+    loading.value = false
   })
   getArtistDetailById(id.value).then((res) => {
     artistDetail.value = res.data.data.artist

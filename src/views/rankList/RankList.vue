@@ -37,7 +37,7 @@
           <span>播放：{{ listInfo.playCount }}次</span>
         </div>
         <div>
-          <el-table :data="musicLists" style="width: 100%" @cell-click="clickItem">
+          <el-table :data="musicLists" style="width: 100%" @cell-click="clickItem" v-loading="loading">
             <el-table-column type="index" :index="(index) => index + 1" />
             <el-table-column prop="name" class-name="link-text" label="歌曲标题" width="180" />
             <el-table-column prop="dlong" label="时长" width="180" />
@@ -73,6 +73,7 @@ const selected = ref(0)
 const selectedItem = ref({})
 const musicLists = ref([])
 const listInfo = ref({})
+const loading = ref(false)
 
 const updateTime = computed(() => formatDateByNumber(selectedItem.value.updateTime, '年月日'))
 
@@ -83,6 +84,7 @@ function changeIndex( index) {
 updateRankList()
 
 async function updateRankList(){
+  loading.value = true
   await getAllTopLists().then((res) => {
   const list = res.data.list
   list.forEach((item) => {
@@ -101,6 +103,7 @@ async function updateRankList(){
 }
 
 async function updateListInfo(){
+  loading.value = true
   musicLists.value = []
   getListDetail(selectedItem.value.id).then((res) => {
     listInfo.value = res.data.playlist
@@ -116,6 +119,7 @@ async function updateListInfo(){
         artists: item.ar
       })
     })
+    loading.value = false
   })
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="list" style="width: 100%" @cell-click="clickItem">
+  <el-table :data="list" style="width: 100%" @cell-click="clickItem" v-loading="loading">
     <el-table-column type="index" :index="(index) => index + 1" />
     <el-table-column prop="name" class-name="link-text" label="歌曲标题" width="180" />
     <el-table-column label="时长" width="180" >
@@ -31,7 +31,8 @@ import { formatMS } from '@/utils/utils'
 const router = useRouter()
 
 defineProps({
-  list: Array
+  list: Array,
+  loading: Boolean
 })
 function clickItem(row, column) {
   if (column.no === 1) {
