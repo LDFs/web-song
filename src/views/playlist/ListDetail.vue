@@ -38,39 +38,7 @@
           <span>播放：{{ detailInfo.playCount }}次</span>
         </div>
         <div>
-          <el-table :data="musicLists" style="width: 100%" @cell-click="clickItem" v-loading="loading">
-            <el-table-column type="index" :index="(index) => index + 1" />
-            <el-table-column
-              prop="name"
-              class-name="link-text"
-              label="歌曲标题"
-              width="180"
-            />
-            <el-table-column prop="dlong" label="时长" width="180" />
-            <el-table-column class-name="link-text" label="歌手">
-              <template #default="scope">
-                <span
-                  v-for="(item, index) in scope.row.ar"
-                  :key="item.id"
-                  @click="gotoArtist(item.id)"
-                  class="link-text"
-                >
-                  {{ item.name
-                  }}<span v-if="index < scope.row.ar.length - 1">/</span>
-                </span>
-              </template>
-            </el-table-column>
-            <el-table-column prop="al.name" class-name="link-text" label="专辑" />
-          </el-table>
-          <el-pagination
-            v-model:current-page="currentPage"
-            :page-size="pageSize"
-            layout="total, prev, pager, next"
-            :page-sizes="sizeOption"
-            :total="total"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
+          <TableCom :id="id" :getDataFun="getListTracks" :total="total" />
         </div>
       </div>
     </div>
@@ -95,10 +63,11 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { getListDetail, getRelatedList } from "@/network/getPlayList";
-import { getParamsByKey, formatDateByNumber, formatMS, getThemeColors } from "@/utils/utils";
+import { getListDetail, getRelatedList, getListTracks } from "@/network/getPlayList";
+import { getParamsByKey, formatDateByNumber, getThemeColors } from "@/utils/utils";
 import LRItem from "@/common/LRItem.vue";
 import {useTable} from '@/utils/useTable'
+import TableCom from "@/components/TableCom.vue";
 
 const [mainColor, lightColor] = getThemeColors()
 
@@ -111,17 +80,13 @@ watch(path, (v) => {
   updateInfo();
 });
 
-const currentPage = ref(0);
-const sizeOption = [10, 20, 50, 100, 200]; // 每页大小选项
-const pageSize = ref(sizeOption[0]); //每页大小
 const total = ref(0); // 总条数
 
 const detailInfo = ref({});
-const musicLists = ref([]);
+// const musicLists = ref([]);
 const creatTime = ref("");
 const creator = ref({});
 const subscribes = ref([]);
-const loading = ref(false)
 
 // const [allData, refresh, loading, pagination] = useTable(getListDetail, id.value)
 
@@ -130,44 +95,16 @@ const loading = ref(false)
 // })
 
 updateInfo();
-function updateInfo() {
-  loading.value = true
+function updateInfo() {  
   getListDetail(id.value).then((res) => {
-    // console.log(res.data.playlist)
     detailInfo.value = res.data.playlist;
     creatTime.value = formatDateByNumber(detailInfo.value.createTime);
     creator.value = res.data.playlist.creator;
     subscribes.value = res.data.playlist.subscribers.slice(0, 8);
-    musicLists.value = [];
-
-    const m = res.data.playlist.tracks.slice(
-      currentPage.value * pageSize.value,
-      (currentPage.value + 1) * pageSize.value
-    );
     total.value = res.data.playlist.trackCount
-    // 处理每首歌的时长
-    m.map((item) => {
-      let d = formatMS(item.dt);
-      musicLists.value.push({
-        id: item.id,
-        dt: item.dt,
-        dlong: d,
-        name: item.name,
-        ar: item.ar,
-        al: item.al,
-      });
-    });
-    loading.value = false
   });
 }
 
-function handleSizeChange(){
-
-}
-
-function handleCurrentChange() {
-  
-}
 
 const relatedList = ref([]);
 getRelatedList(id.value).then((res) => {
@@ -181,35 +118,26 @@ getRelatedList(id.value).then((res) => {
   });
 });
 
-function clickItem(row, column) {
-  if (column.no === 1) {
-    const id = row.id;
-    router.push("/song?id=" + id);
-  } else if (column.no === 4) {
-    const id = row.album.id;
-    router.push(`/albumDetail?id=${id}`);
-  }
-}
-function gotoArtist(id) {
-  // console.log(id)
-  router.push("/artistSongs?id=" + id);
-}
-
-const store = useStore()
-function playTheList(){
-  store.commit('setCurList', musicLists.value)
-  store.commit('setIsPlay', true)
-  store.commit("setSongInfo", musicLists.value[0]);
-  store.dispatch("updateMusicUrl", musicLists.value[0].id);
-}
+// const store = useStore()
+// function playTheList(){
+//   store.commit('setCurList', musicLists.value)
+//   store.commit('setIsPlay', true)
+//   store.commit("setSongInfo", musicLists.value[0]);
+//   store.dispatch("updateMusicUrl", musicLists.value[0].id);
+// }
 </script>
 <style>
 .link-text {
   cursor: pointer;
 }
+.el-tooltip__trigger {
+  height: auto;
+  width: auto;
+}
 </style>
 
 <style lang="scss" scoped>
+
 .whole-page {
   border-left: 1px solid #c1bfbf;
   border-right: 1px solid #c1bfbf;

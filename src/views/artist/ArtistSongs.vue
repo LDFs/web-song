@@ -15,24 +15,7 @@
       </div>
       <div class="list-title">热门作品</div>
       <div class="songs-list">
-        <el-table :data="songs" style="width: 100%" @cell-click="clickItem" v-loading="loading">
-          <el-table-column type="index" :index="(index) => index + 1" />
-          <el-table-column prop="name" class-name="link-text" label="歌曲标题" width="180" />
-          <el-table-column prop="dlong" label="时长" width="180" />
-          <el-table-column label="歌手">
-            <template #default="scope">
-              <span
-                v-for="(item, index) in scope.row.artists"
-                :key="item.id"
-                @click="gotoArtist(item.id)"
-                class="artist-name"
-              >
-                {{ item.name }}<span v-if="index < scope.row.artists.length - 1">/</span>
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column class-name="link-text" prop="album.name" label="专辑" />
-        </el-table>
+        <TableCom :id="id" :total="50" :getDataFun="getArtistTopSongs" :showPagi="false" />
       </div>
     </div>
     <div class="right">
@@ -55,17 +38,16 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getParamsByKey, formatMS } from '@/utils/utils'
+import { getParamsByKey } from '@/utils/utils'
 import { getArtistTopSongs, getArtistDetailById, getRelatedArtists } from '@/network/getArtists'
+import TableCom from '@/components/TableCom.vue'
 
 const route = useRoute()
 let id = ref(getParamsByKey(route.fullPath, 'id'))
 const path = computed(() => route.fullPath)
 
-const songs = ref([])
 const artistDetail = ref({})
 const relatedArtists = ref([])
-const loading = ref(false)
 
 watch(path, (v) => {
   if(v.startsWith('/artistSong')){
@@ -76,41 +58,12 @@ watch(path, (v) => {
 updateData()
 
 function updateData() {
-  loading.value = true
-  getArtistTopSongs(id.value).then((res) => {
-    songs.value = []
-    const m = res.data.songs
-    m.map((item) => {
-      songs.value.push({
-        id: item.id,
-        dt: item.dt,
-        dlong: formatMS(item.dt),
-        name: item.name,
-        artists: item.ar, // formatArtists(item.ar),
-        album: item.al
-      })
-    })
-    loading.value = false
-  })
   getArtistDetailById(id.value).then((res) => {
     artistDetail.value = res.data.data.artist
   })
   getRelatedArtists(id.value).then((res) => {
     relatedArtists.value = res.data.artists
   })
-}
-
-function gotoArtist(id) {
-  router.push('/artistSongs?id=' + id)
-}
-function clickItem(row, column) {
-  if (column.no === 1) {
-    const id = row.id
-    router.push('/song?id=' + id)
-  } else if (column.no === 4) {
-    const id = row.album.id
-    router.push(`/albumDetail?id=${id}`)
-  }
 }
 
 const router = useRouter()

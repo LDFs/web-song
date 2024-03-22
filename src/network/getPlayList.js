@@ -90,11 +90,20 @@ function getArtHotAlbum(params){
 }
 
 // 歌单详情
-function getListDetail(id){
+function getListDetail({id}){
   return request({
     url: '/playlist/detail',
     params: {
       id: id
+    }
+  })
+}
+
+function getListTracks({id, limit=20, offset=0}){
+  return request({
+    url: '/playlist/track/all',
+    params: {
+      id, limit, offset
     }
   })
 }
@@ -147,5 +156,6 @@ export {
   getRelatedList,
   getAllTopLists,
   getSongRelatedLists,
-  getAllCats
+  getAllCats,
+  getListTracks
 }

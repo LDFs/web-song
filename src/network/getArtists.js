@@ -29,7 +29,7 @@ function getArtistsByCats(type=-1, area=-1){
 }
 
 // 获取歌手的热门歌曲
-function getArtistTopSongs(id){
+function getArtistTopSongs({id}){
   return request({
     url:  '/artist/top/song',
     params:{id}

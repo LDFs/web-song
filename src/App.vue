@@ -4,6 +4,8 @@ import { RouterView } from 'vue-router'
 import Header from '@/views/outlineView/TopHeader.vue'
 import FooterPlay from './views/outlineView/FooterPlay.vue';
 
+// import myvirtualList from './views/playlist/myvirtualList.vue';
+
 const firstSubMenu = [
     {
       name: '推荐',
@@ -31,7 +33,10 @@ const listenMouse = function(e){
     mouseBootom.value = false
   }
 }
-console.log(this)
+// const list = ref([])
+// for(let i = 0; i < 10000; i++){
+//   list.value.push(`kikiik${i}`)
+// }
 
 </script>
 
@@ -44,6 +49,7 @@ console.log(this)
     </keep-alive>    
     <component :is="Component" :key="$route.name" v-if="!$route.meta.keepAlive"/>
   </router-view>
+  <!-- <myvirtualList :list="list"/> -->
   <footer>
     前端项目 by LDF; 
     框架技术：Vue3、vue-router、vuex、axios; 
