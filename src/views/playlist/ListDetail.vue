@@ -38,7 +38,7 @@
           <span>播放：{{ detailInfo.playCount }}次</span>
         </div>
         <div>
-          <TableCom :id="id" :getDataFun="getListTracks" :total="total" />
+          <TableCom ref="tableRef" :id="id" :getDataFun="getListTracks" :total="total" />
         </div>
       </div>
     </div>
@@ -96,7 +96,7 @@ const subscribes = ref([]);
 
 updateInfo();
 function updateInfo() {  
-  getListDetail(id.value).then((res) => {
+  getListDetail({id: id.value}).then((res) => {
     detailInfo.value = res.data.playlist;
     creatTime.value = formatDateByNumber(detailInfo.value.createTime);
     creator.value = res.data.playlist.creator;
@@ -118,13 +118,10 @@ getRelatedList(id.value).then((res) => {
   });
 });
 
-// const store = useStore()
-// function playTheList(){
-//   store.commit('setCurList', musicLists.value)
-//   store.commit('setIsPlay', true)
-//   store.commit("setSongInfo", musicLists.value[0]);
-//   store.dispatch("updateMusicUrl", musicLists.value[0].id);
-// }
+const tableRef = ref(null)
+function playTheList(){
+  tableRef.value.playTheList()
+}
 </script>
 <style>
 .link-text {

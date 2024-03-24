@@ -33,9 +33,11 @@
 <script setup>
 import {ref, watch} from 'vue'
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 import { formatMS } from "@/utils/utils";
 
 const router = useRouter();
+const store = useStore()
 
 const props = defineProps({
   getDataFun: Function,
@@ -83,6 +85,16 @@ function clickItem(row, column) {
 function gotoArtist(id) {
   router.push("/artistSongs?id=" + id);
 }
+
+function playTheList(){
+  store.commit('setCurList', musicLists.value)
+  store.commit('setIsPlay', true)
+  store.commit("setSongInfo", musicLists.value[0]);
+  store.dispatch("updateMusicUrl", musicLists.value[0].id);
+}
+defineExpose({
+  playTheList
+})
 
 </script>
 

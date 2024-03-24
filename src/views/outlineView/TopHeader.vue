@@ -24,7 +24,7 @@
     </div>
     <div style="position: relative">
       <div class="link-text" @click="setThemeColor">设置主题颜色</div>
-      <ThemeColor v-if="showThemeColor" @blur="hiddenTheme" tabindex="-1" />
+      <ThemeColor v-show="showThemeColor" @closeTheme="setThemeColor" />
     </div>
     <div>
       <el-button plain @click="showLoginPanel = true" v-if="!isLogin"> 登录 </el-button>
@@ -114,9 +114,6 @@ function gotoSearch() {
 const showThemeColor = ref(false);
 function setThemeColor() {
   showThemeColor.value = !showThemeColor.value;
-}
-function hiddenTheme() {
-  showThemeColor.value = false;
 }
 
 loginStatus().then((res) => {

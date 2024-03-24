@@ -48,10 +48,11 @@
       <el-slider
         v-if="showVolumn"
         v-model="volumnValue"
+        ref="volumnRef"
         vertical
         height="10vh"
         @change="musicVolumnChange"
-        style="position: absolute; bottom: 6.4vh; left: -4px"
+        style="position: absolute; bottom: 3em; left: -4px"
         :show-tooltip="false"
       />
       <IconVolumn class="control-icon" @click="exchangeVolumnSlider" />
@@ -91,8 +92,17 @@
             >
           </div>
           <div>{{ formatMS(item.dt) }}</div>
-          <div><el-icon><Top /></el-icon></div>
-          <div><el-icon><Bottom /></el-icon></div>
+          <div>
+            <el-icon style="cursor: pointer;" v-if="index > 0" @click="clickTop(index)"><Top /></el-icon>
+            <span v-else style="display: inline-block; width:1em;height: 1em;"></span>
+          </div>
+          <div>
+            <el-icon style="cursor: pointer;" v-if="index < curList.length-1" @click="clickBottom(index)"><Bottom /></el-icon>
+            <span v-else style="display: inline-block; width:1em;height: 1em;"></span>
+          </div>
+          <div>
+            <el-icon style="cursor: pointer;" @click="deleteSong(index)"><IconCha /></el-icon>
+          </div>
         </div>
         <div v-if="curList.length == 0">没有播放的歌曲</div>
       </div>
@@ -104,6 +114,7 @@
 import { ref, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import { onClickOutside } from '@vueuse/core'
 
 import { getSongUrl } from '@/network/getSongsInfo'
 import { formatMS, getThemeColors } from '@/utils/utils'
@@ -119,6 +130,7 @@ import IconRandomPlay from '@/components/icons/IconRandomPlay.vue'
 import IconSinglePlay from '@/components/icons/IconSinglePlay.vue'
 import IconLockOff from '@/components/icons/IconLockOff.vue'
 import IconLockOn from '@/components/icons/IconLockOn.vue'
+import IconCha from '@/components/icons/IconCha.vue'
 
 const store = useStore()
 const router = useRouter()
@@ -318,9 +330,38 @@ function exchangeVolumnSlider() {
 function musicVolumnChange() {
   audioRef.value.volume = volumnValue.value / 100
 }
+const volumnRef = ref(null)
+onClickOutside(volumnRef, () => {
+  if(showVolumn.value){
+    showVolumn.value = false
+  }
+})
 
 const [ , lightColor, deepColor] = getThemeColors()
-// useAVBars(audioRef, canu, { src: songUrlInfo.value.url, canvHeight: 40, canvWidth: 200, barColor: lightColor.value })
+
+function clickTop(e){
+  // 交换前一个和当前的位置
+  store.commit('exchangeCurList', {i: e, j: e-1})
+  if(curIndex.value === e){
+    store.commit('setCurIndex', e-1)
+  }else if(curIndex.value === e-1){
+    store.commit('setCurIndex', e)
+  }
+}
+function clickBottom(e){
+  store.commit('exchangeCurList', {i: e, j: e+1})
+  if(curIndex.value === e){
+    store.commit('setCurIndex', e+1)
+  }else if(curIndex.value === e+1){
+    store.commit('setCurIndex', e)
+  }
+}
+function deleteSong(index){
+  store.commit('deleteOneSong', index)
+  if(curIndex.value === index){
+    store.commit('setIsPlay', false)
+  }
+}
 </script>
 
 <style>
@@ -340,6 +381,11 @@ const [ , lightColor, deepColor] = getThemeColors()
 </style>
 
 <style lang="scss" scoped>
+:deep(.el-tooltip__trigger){
+  width: 10px;
+  height: 10px
+}
+
 .footer-play-container {
   position: fixed;
   bottom: 0;
@@ -445,9 +491,9 @@ const [ , lightColor, deepColor] = getThemeColors()
 .el-overlay {
   background-color: transparent;
 }
-.el-slider__button,
+/* .el-slider__button,
 .el-tooltip__trigger {
   width: 14px;
   height: 14px;
-}
+} */
 </style>

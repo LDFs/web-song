@@ -5,18 +5,21 @@
     :style="{ backgroundImage: `url(${musicInfo.al.picUrl})` }"
   ></div>
   <div class="visual-container">
-    <div style="display: flex; align-items: center;">
-      <span class="fix-select-text">{{ typeText }}</span>
-      <el-select v-model="visualType" placeholder="Select" style="width: 10vw; height: 2rem;">
+    <div style="display: flex; align-items: center; width: 8vw;margin-right: 3vw;">
+      <el-select
+        v-model="visualType"
+        placeholder="选择"
+        size="large"
+      >
         <el-option
           v-for="item in options"
           :key="item.value"
           :label="item.label"
           :value="item.value"
-          @change="$forceUpdate()"
         />
       </el-select>
     </div>
+    
     <div class="right-cover" >
       <canvas ref="canvasElement" class="canvas-item" width="400" height="400"></canvas>
       <button class="al-pic" :class="{pauseRotate: !isPlay}" :style="{backgroundImage: `url(${musicInfo.al.picUrl})`}" >
@@ -69,12 +72,6 @@ const options = [{
   value: 'danceLine',
   label: '跳动的线'
 }]
-const typeText = computed(() => {
-  const index = options.findIndex(item => {
-    return item.value == visualType.value
-  })
-  return options[index].label
-})
 
 function roundRectangle(dataArray, canvasCtx, analyser){
   const randomData = Uint8Array.from(new Uint8Array(120), (v,k) => k);
@@ -196,13 +193,13 @@ function lineTimeDomain(dataArray, canvasCtx, analyser){
       const v = dataArray[i] / 128.0;
       const y = v * canvasElement.value.width /2;
       if(i === 0) {
-        canvasCtx.moveTo(x, y - 40); 
+        canvasCtx.moveTo(x, y - 50); 
       } else {
-        canvasCtx.lineTo(x, y - 40); 
+        canvasCtx.lineTo(x, y - 50); 
       }
       canvasCtx.restore()
     }
-    canvasCtx.lineTo(0, dataArray[0] / 128.0 * canvasElement.value.width / 2 -40);
+    canvasCtx.lineTo(0, dataArray[0] / 128.0 * canvasElement.value.width / 2 -50);
     canvasCtx.restore()
     canvasCtx.stroke();
   }

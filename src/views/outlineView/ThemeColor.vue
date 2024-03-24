@@ -3,6 +3,9 @@
     <div class="inline-block">
       <div class="inline-block">选取主题颜色</div>
       <el-color-picker v-model="color1" />
+      <div class="close-btn" @click="closeTheme">
+        <el-icon><IconCha /></el-icon>
+      </div>
     </div>
     <div class="slider-demo-block">
       <span class="demonstration">深浅颜色间隔</span>
@@ -22,6 +25,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useStore } from 'vuex'
+import IconCha from '@/components/icons/IconCha.vue'
 
 const store = useStore()
 const color1 = ref(store.state.themeModule.mainColor)
@@ -119,6 +123,11 @@ function computeDerivateColor(color) {
     return [l, d]
   }
 }
+
+const emit = defineEmits(['closeTheme'])
+function closeTheme() {
+  emit('closeTheme', '111')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -132,6 +141,19 @@ function computeDerivateColor(color) {
   padding: 10px;
   box-shadow: 1px 1px 6px 2px #eee;
   z-index: 20;
+}
+.close-btn {
+  background-color: #000;
+  position: absolute;
+  right: 1em;
+  top: 1em;
+  height: 1.2em;
+  width: 1.2em;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 .inline-block {
   display: inline-block;

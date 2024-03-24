@@ -24,8 +24,19 @@ const store = createStore({
       state.isPlay = bool
     },
     setCurList(state, list){
-      state.curPlayList = list
+      state.curPlayList = [...list]
       state.curIndex = 0
+    },
+    exchangeCurList(state, {i, j}){
+      let tmp = state.curPlayList[i]
+      state.curPlayList[i] = state.curPlayList[j]
+      state.curPlayList[j] = tmp
+    },
+    deleteOneSong(state, i){
+      for(; i < state.curPlayList.length; i++){
+        state.curPlayList[i] = state.curPlayList[i+1]
+      }
+      state.curPlayList.length -= 1
     },
     pushCurList(state, item){
       // 避免数组元素重复
