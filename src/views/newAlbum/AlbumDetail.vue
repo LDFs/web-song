@@ -86,11 +86,12 @@ import LRItem from "@/common/LRItem.vue";
 const [, lightColor] = getThemeColors()
 const route = useRoute();
 const router = useRouter();
-const path = computed(() => route.fullPath);
-const id = ref(getParamsByKey(route.fullPath, "id"));
+console.log(route);
+const query = computed(() => route.query);
+const id = ref(route.query.id);
 const loading = ref(false)
-watch(path, (v) => {
-  id.value = getParamsByKey(v, "id");
+watch(query, (v) => {
+  id.value = v.id;
   updateData();
 });
 const albumInfo = ref({});

@@ -38,7 +38,16 @@ function imgOnLoad(){
 }
 const router = useRouter()
 function gotoAlbum(){
-  router.push(`/albumDetail?id=${props.item.id}`)
+  // router.push(`/albumDetail?id=${props.item.id}`)
+  router.push({
+    name: 'albumDetail',
+    params: {
+      id: props.item.id
+    },
+    query: {
+      id: props.item.id
+    },
+  })
 }
 </script>
 
