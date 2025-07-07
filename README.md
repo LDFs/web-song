@@ -1,4 +1,4 @@
-# musicu[Fndefined-web1
+# music-web1 一个web端音乐播放平台
 
 This template should help get you started developing with Vue 3 in Vite.
 
